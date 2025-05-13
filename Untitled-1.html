@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asana導入前に考えるべきこと</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; padding:0; font-family:'Noto Sans JP'; overflow:hidden; }
+    .slide { width:1280px; min-height:720px;
+      background: linear-gradient(135deg, #fffbf8 0%, #fff5f2 100%);
+      position:relative; }
+    .slide-content { padding:4rem 2rem; text-align:center; position:relative; z-index:10; }
+    .title { font-size:4rem; font-weight:700; color:#2e2e2e; line-height:1.2; }
+    .accent { color:#FC636B }
+    .subtitle { margin-top:1rem; font-size:1.8rem; color:#666; }
+    .question-list { margin:2rem auto 0; max-width:800px; display:grid; grid-template-columns:repeat(5,1fr); gap:1rem; }
+    .question-list div { background:#f5f5f5; border-radius:8px; padding:.8rem; font-weight:500; }
+    .question-list div span { font-weight:700; margin-right:.4rem; }
+    .footer { position:absolute; bottom:20px; width:100%; text-align:center; color:#666; font-size:1rem; }
+    .shape { position:absolute; border-radius:50%; z-index:1; }
+    .shape-1 { top:-80px; right:-80px; width:460px; height:460px; background:rgba(252,99,107,0.08); }
+    .shape-2 { bottom:-120px; left:-80px; width:380px; height:380px; background:rgba(252,149,107,0.06); }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="slide-content">
+      <div class="circle-icon mx-auto mb-8" style="background:#FC636B;width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 15px -3px rgba(252,99,107,0.3);">
+        <i class="fas fa-tasks text-white text-3xl"></i>
+      </div>
+      <h1 class="title"><span class="accent">Asana</span>導入前に考えるべきこと</h1>
+      <p class="subtitle">効果的なプロジェクト管理のための<br><span class="accent font-bold">5つの重要な問い</span></p>
+      <div class="question-list mt-6">
+        <div><span>①</span>チーム運営</div>
+        <div><span>②</span>情報共有</div>
+        <div><span>③</span>コミュニケーション</div>
+        <div><span>④</span>ツール運用</div>
+        <div><span>⑤</span>継続的改善</div>
+      </div>
+    </div>
+    <div class="footer">社内向け資料 | 2023</div>
+  </div>
+</body>
+</html>

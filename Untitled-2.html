@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>① チームや組織をどう動かしたいか？</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;padding:0;font-family:'Noto Sans JP';overflow:hidden;}
+    .slide{width:1280px;min-height:720px;background:linear-gradient(135deg,#fffbf8 0%,#fff5f2 100%);position:relative;}
+    .slide-header{background:#FC636B;color:#fff;padding:1.5rem 3rem;border-radius:0 0 30px 0;font-size:1.8rem;font-weight:700;display:inline-block;box-shadow:0 4px 6px -1px rgba(252,99,107,0.3);}
+    .slide-number{position:absolute;top:2rem;right:3rem;font-size:1.2rem;color:#FC636B;font-weight:700;}
+    .content{padding:3rem;}
+    .intro{font-size:1.5rem;font-weight:600;color:#444;margin-bottom:1rem;}
+    .step{font-size:1rem;color:#888;margin-bottom:2rem;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+    .card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);display:flex;align-items:center;transition:transform .3s;}
+    .card:hover{transform:translateX(10px);}
+    .icon{width:50px;height:50px;border-radius:50%;background:rgba(252,99,107,0.1);display:flex;align-items:center;justify-content:center;margin-right:1.5rem;}
+    .text{font-size:1.2rem;color:#333;font-weight:500;}
+    .note{background:#FFEDEE;border-left:4px solid #FC636B;padding:1rem;border-radius:8px;font-size:.9rem;color:#555;}
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="slide-header"><i class="fas fa-users mr-3"></i>① チームや組織をどう動かしたいか？</div>
+    <div class="slide-number">1/5</div>
+    <div class="content">
+      <p class="intro">まずはチームの目指す姿を明確にしましょう</p>
+      <p class="step">STEP 1 → STEP 2 → STEP 3 の順で検討</p>
+      <div class="grid">
+        <div class="card">
+          <div class="icon"><i class="fas fa-bullseye text-pink-600"></i></div>
+          <div class="text"><strong>Step 1.</strong> 私たちはどんな<span class="text-red-500">働き方・進め方</span>を目指したいか？</div>
+        </div>
+        <div class="note">具体的な働き方のビジョンを設定すると、Asanaの活用方針が明確になります。</div>
+        <div class="card">
+          <div class="icon"><i class="fas fa-exclamation-triangle text-pink-600"></i></div>
+          <div class="text"><strong>Step 2.</strong> どんなことに今、<span class="text-red-500">不満・課題</span>を感じているか？</div>
+        </div>
+        <div class="note">現状の課題を明確にすることで、導入の具体的な目的が見えてきます。</div>
+        <div class="card">
+          <div class="icon"><i class="fas fa-star text-pink-600"></i></div>
+          <div class="text"><strong>Step 3.</strong> 理想のチーム像（<span class="text-red-500">スピード・透明性・自律性</span>など）は何か？</div>
+        </div>
+        <div class="note">チームの価値観を定義し、設定や運用ルールの方向性を決定します。</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
