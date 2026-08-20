@@ -1,0 +1,21 @@
+{
+  "name": "mahjong-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "スマホで遊べる日本式リーチ麻雀（四人打ち）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@kobalab/majiang-ai": "^1.2.0",
+    "@kobalab/majiang-core": "^1.4.1"
+  },
+  "devDependencies": {
+    "vite": "^7.3.6",
+    "vite-plugin-pwa": "^1.3.0"
+  }
+}
