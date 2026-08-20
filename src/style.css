@@ -1,0 +1,599 @@
+/* ------------------------------------------------------------------ base */
+:root {
+    --felt:        #14532d;
+    --felt-dark:   #0d3a20;
+    --felt-line:   rgba(255, 255, 255, .12);
+    --ink:         #f4f6f4;
+    --ink-dim:     #a9bdae;
+    --gold:        #e8c46a;
+    --danger:      #e2494a;
+    --accent:      #2f9e6b;
+    --tile-bg:     #fdfaf1;
+    --tile-edge:   #d8cfb4;
+    --tile-back:   #1f7a4d;
+    --radius:      6px;
+    --safe-top:    env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overscroll-behavior: none;
+}
+
+/* iOS の URL バー分を含めた実際の表示領域に合わせる */
+@supports (height: 100dvh) {
+    html, body { height: 100dvh; }
+}
+
+body {
+    background: #071a10;
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans',
+                 'Noto Sans JP', 'Yu Gothic', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+#app {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    height: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 42%, #1c6b3f 0%, var(--felt) 45%, var(--felt-dark) 100%);
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ 牌 */
+.tile {
+    position: relative;
+    width: var(--tw, 26px);
+    height: calc(var(--tw, 26px) * 1.4);
+    border-radius: calc(var(--tw, 26px) * .13);
+    background: linear-gradient(#fffdf6, var(--tile-bg) 62%, #eee6d2);
+    box-shadow: 0 1px 0 #b8ad8d, 0 2px 3px rgba(0, 0, 0, .35);
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.tile-face { display: block; width: 100%; height: 100%; }
+
+.tile--back {
+    background: linear-gradient(150deg, #2c9a63, var(--tile-back) 55%, #135f39);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16),
+                0 1px 0 #0c3f26, 0 2px 3px rgba(0, 0, 0, .35);
+}
+
+.tile--red { box-shadow: 0 0 0 1.5px var(--danger), 0 2px 3px rgba(0, 0, 0, .35); }
+
+/* 横向きの牌（鳴き牌 / リーチ宣言牌 / 加槓） */
+.tile-rot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+    width: calc(var(--tw, 26px) * 1.4);
+}
+.tile-rot .rot-cell {
+    width: calc(var(--tw, 26px) * 1.4);
+    height: var(--tw, 26px);
+    display: grid;
+    place-items: center;
+}
+.tile-rot .rot-cell .tile { transform: rotate(-90deg); }
+
+.tile-label {
+    position: absolute;
+    top: 0; left: 1px;
+    font-size: calc(var(--tw, 26px) * .32);
+    line-height: 1;
+    color: #8a8578;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+/* リーチ宣言牌 */
+.tile--lizhi { outline: 2px solid var(--gold); outline-offset: -2px; }
+/* 直前の打牌 */
+.tile--last  { box-shadow: 0 0 0 2px var(--gold), 0 0 10px 2px rgba(232, 196, 106, .7); }
+
+/* ------------------------------------------------------------------ HUD */
+.hud {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: calc(var(--safe-top) + 6px) 10px 6px;
+    background: linear-gradient(#04170d, rgba(4, 23, 13, 0));
+    font-size: 12px;
+}
+
+.hud-round { font-weight: 700; letter-spacing: .04em; }
+.hud-rest  { color: var(--ink-dim); }
+.hud-rest b { color: var(--ink); font-size: 14px; }
+
+.hud-dora {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    margin-left: auto;
+    --tw: 17px;
+}
+
+.hud-dora-label { color: var(--ink-dim); font-size: 10px; margin-right: 2px; }
+
+.icon-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .1);
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+}
+
+/* ---------------------------------------------------------------- 卓 */
+.table-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+}
+
+.table {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    --S: 340px;                     /* JS で実サイズに更新する */
+    --dw: calc(var(--S) / 17);      /* 河の牌幅 */
+    --bw: calc(var(--S) / 26);      /* 相手の手牌（裏）幅 */
+}
+
+.seat {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 50%;
+}
+/* 自分を手前に、下家を右、対面を上、上家を左に配置する。
+   seat-inner は回転前の「下端」に置かれるので、右側に出すには反時計回りに回す */
+.seat--bottom { transform: rotate(0deg); }
+.seat--right  { transform: rotate(-90deg); }
+.seat--top    { transform: rotate(180deg); }
+.seat--left   { transform: rotate(90deg); }
+
+.seat-inner {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 河 */
+.he {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    width: calc(var(--dw) * 6.6);
+    min-height: calc(var(--dw) * 1.4 * 3);
+    --tw: var(--dw);
+}
+.he .tile { margin: 0 1px 1px 0; }
+
+/* 手牌（相手）と鳴き */
+.seat-hand {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 2px 2px 1px;
+    min-height: calc(var(--bw) * 1.4 + 4px);
+}
+.seat-backs { display: flex; --tw: var(--bw); }
+.seat-backs .tile { margin-right: 1px; }
+
+.melds { display: flex; gap: 3px; align-items: flex-end; }
+.meld  { display: flex; align-items: flex-end; --tw: var(--bw); }
+
+.seat--bottom .seat-hand { justify-content: flex-end; padding-right: 4px; }
+.seat--bottom .meld { --tw: calc(var(--bw) * 1.15); }
+
+/* 中央情報 */
+.center {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(var(--S) * .30);
+    height: calc(var(--S) * .30);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, .34);
+    box-shadow: inset 0 0 0 1px var(--felt-line);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    font-size: calc(var(--S) * .026);
+    line-height: 1.15;
+}
+
+.center-mid {
+    grid-area: 2 / 2 / 3 / 3;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    font-size: calc(var(--S) * .028);
+    color: var(--ink-dim);
+}
+.center-mid b { display: block; color: var(--gold); font-size: calc(var(--S) * .036); }
+
+.pscore {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    white-space: nowrap;
+}
+.pscore--bottom { grid-area: 3 / 1 / 4 / 4; }
+.pscore--top    { grid-area: 1 / 1 / 2 / 4; }
+.pscore--left   { grid-area: 2 / 1 / 3 / 2; flex-direction: column; gap: 0; }
+.pscore--right  { grid-area: 2 / 3 / 3 / 4; flex-direction: column; gap: 0; }
+
+.pscore .feng {
+    display: inline-grid;
+    place-items: center;
+    width: calc(var(--S) * .042);
+    height: calc(var(--S) * .042);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .14);
+    font-size: calc(var(--S) * .028);
+}
+.pscore--zhuang .feng { background: var(--gold); color: #29200a; font-weight: 700; }
+.pscore.is-turn { color: var(--gold); }
+.pscore.is-turn .feng { box-shadow: 0 0 0 2px var(--gold); }
+.pscore .pts { font-variant-numeric: tabular-nums; }
+.pscore.is-lizhi .pts { color: var(--danger); }
+
+/* リーチ棒 */
+.lizhi-stick {
+    position: absolute;
+    background: #f2f2ee;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+}
+.lizhi-stick::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 4px; height: 4px;
+    margin: -2px 0 0 -2px;
+    border-radius: 50%;
+    background: var(--danger);
+}
+
+/* 発声（ポン/チー等） */
+.say {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%) scale(.7);
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .82);
+    color: var(--gold);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 8;
+}
+.say.show { animation: sayPop 1s ease-out; }
+@keyframes sayPop {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+    18%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+    75%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+}
+.say--rong, .say--zimo { color: #ffd9a0; }
+
+/* ------------------------------------------------------- 自分の手牌 */
+.myarea {
+    flex: 0 0 auto;
+    padding: 0 4px calc(var(--safe-bottom) + 6px);
+    z-index: 6;
+}
+
+.assist {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-dim);
+    min-height: 15px;
+    letter-spacing: .02em;
+}
+
+.hud-furiten {
+    color: var(--danger);
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(226, 73, 74, .16);
+}
+.hud-furiten[hidden] { display: none; }
+
+.hand-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    min-height: 64px;
+    padding-top: 12px;
+    --tw: min(30px, calc((100vw - 34px) / 14.2), calc((560px - 34px) / 14.2));
+}
+
+.hand {
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+}
+
+/* 自分の副露（手牌の右側に少し小さく表示する） */
+.my-melds {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    --tw: calc(min(30px, calc((100vw - 34px) / 14.2), calc((560px - 34px) / 14.2)) * .72);
+}
+
+.hand .tile {
+    transition: transform .12s ease;
+    will-change: transform;
+}
+.hand .tile.is-selected { transform: translateY(-11px); box-shadow: 0 0 0 2px var(--gold), 0 6px 8px rgba(0,0,0,.45); }
+.hand .tile.is-disabled { filter: brightness(.55) saturate(.6); }
+.hand .tile.is-suggest::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: var(--accent);
+}
+.hand .zimo-gap { width: 10px; flex: 0 0 auto; }
+
+/* ------------------------------------------------------- 操作ボタン */
+.actions {
+    position: absolute;
+    right: 6px;
+    bottom: calc(var(--safe-bottom) + 96px);
+    display: flex;
+    flex-wrap: wrap-reverse;
+    justify-content: flex-end;
+    gap: 8px;
+    z-index: 7;
+    max-width: 100%;
+}
+
+.act {
+    min-width: 62px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    background: linear-gradient(#3d3d3d, #202020);
+    box-shadow: 0 2px 0 #000, 0 4px 10px rgba(0, 0, 0, .5);
+    color: #fff;
+}
+.act:active { transform: translateY(2px); box-shadow: 0 0 0 #000; }
+.act--hule  { background: linear-gradient(#f0a92f, #d4790f); color: #2a1900; }
+.act--lizhi { background: linear-gradient(#e0574f, #b3271f); }
+.act--skip  { background: linear-gradient(#4a5a52, #2a352f); font-size: 15px; min-width: 54px; }
+
+/* 面子選択 */
+.picker {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: calc(var(--safe-bottom) + 158px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 9;
+}
+.picker-title { font-size: 12px; color: var(--ink-dim); }
+.picker-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.picker-opt {
+    display: flex;
+    padding: 6px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, .72);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .2);
+    --tw: 24px;
+}
+.picker-opt .tile { margin-right: 1px; }
+
+/* ------------------------------------------------------------ 画面 */
+.screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.screen[hidden] { display: none; }
+
+/* タイトル */
+.title-screen {
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    padding: calc(var(--safe-top) + 20px) 24px calc(var(--safe-bottom) + 20px);
+    text-align: center;
+    overflow-y: auto;
+}
+.logo {
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: .18em;
+    color: var(--gold);
+    text-shadow: 0 3px 0 #6b4c10, 0 8px 20px rgba(0, 0, 0, .6);
+}
+.logo small { display: block; font-size: 13px; letter-spacing: .3em; color: var(--ink-dim); text-shadow: none; margin-top: 6px; }
+
+.menu { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px; }
+.menu-btn {
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(#2f9e6b, #1d6b47);
+    font-size: 17px;
+    font-weight: 700;
+    box-shadow: 0 3px 0 #10402a, 0 6px 14px rgba(0, 0, 0, .45);
+}
+.menu-btn--sub { background: linear-gradient(#3b4c43, #22302a); box-shadow: 0 3px 0 #101a15; font-size: 15px; }
+.menu-btn:active { transform: translateY(3px); box-shadow: none; }
+
+.title-note { font-size: 11px; color: var(--ink-dim); max-width: 320px; line-height: 1.7; }
+.title-note a { color: var(--gold); }
+
+/* ------------------------------------------------------ ダイアログ */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, .62);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 20;
+    backdrop-filter: blur(2px);
+}
+.overlay[hidden] { display: none; }
+
+.dialog {
+    width: 100%;
+    max-width: 400px;
+    max-height: 92%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px;
+    border-radius: 14px;
+    background: linear-gradient(#1d2b23, #121b16);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .6), inset 0 0 0 1px rgba(255, 255, 255, .09);
+}
+.dialog h2 { margin: 0 0 10px; font-size: 19px; letter-spacing: .08em; }
+.dialog h2 .sub { font-size: 12px; color: var(--ink-dim); margin-left: 8px; letter-spacing: 0; }
+
+.result-hand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 5px 2px;
+    margin-bottom: 4px;
+    --tw: min(22px, calc((100vw - 92px) / 15));
+}
+.result-hand .divider { width: 7px; }
+.result-dora { margin-top: 10px; align-items: center; gap: 5px 3px; font-size: 12px; color: var(--ink-dim); }
+
+.hupai-list { margin: 10px 0; font-size: 13px; }
+.hupai-list li { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dashed rgba(255,255,255,.08); }
+.hupai-list { list-style: none; padding: 0; }
+.result-total { text-align: right; font-size: 20px; font-weight: 800; color: var(--gold); margin-top: 6px; }
+.result-total small { font-size: 12px; color: var(--ink-dim); font-weight: 400; }
+
+.fenpei { margin-top: 12px; display: grid; grid-template-columns: 1fr auto auto; gap: 4px 10px; font-size: 13px; }
+.fenpei .plus  { color: #6ee7a8; }
+.fenpei .minus { color: #ff9b9b; }
+.fenpei .name { color: var(--ink-dim); }
+.fenpei .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.dialog-actions { display: flex; gap: 8px; margin-top: 14px; }
+.dialog-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    background: linear-gradient(#2f9e6b, #1d6b47);
+    font-weight: 700;
+    text-align: center;
+}
+.dialog-btn--sub { background: linear-gradient(#3b4c43, #22302a); }
+
+/* 設定 */
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    font-size: 14px;
+}
+.setting-row small { display: block; color: var(--ink-dim); font-size: 11px; }
+.switch {
+    position: relative;
+    width: 46px; height: 27px;
+    border-radius: 999px;
+    background: #3a4741;
+    flex: 0 0 auto;
+    transition: background .18s;
+}
+.switch::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 21px; height: 21px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .18s;
+}
+.switch[aria-checked="true"] { background: var(--accent); }
+.switch[aria-checked="true"]::after { transform: translateX(19px); }
+
+.seg { display: flex; border-radius: 8px; overflow: hidden; background: #2a352f; }
+.seg button { padding: 7px 12px; font-size: 13px; }
+.seg button[aria-pressed="true"] { background: var(--accent); font-weight: 700; }
+
+/* 順位表 */
+.rank-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 6px; }
+.rank-table th, .rank-table td { padding: 7px 4px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.08); }
+.rank-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.rank-table tr.me { color: var(--gold); font-weight: 700; }
+
+/* 横向き警告など */
+.toast {
+    position: absolute;
+    left: 50%; bottom: calc(var(--safe-bottom) + 150px);
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .82);
+    font-size: 13px;
+    z-index: 15;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+@media (max-height: 620px) {
+    .hand-row { min-height: 54px; padding-top: 8px; }
+    .act { padding: 8px 12px; font-size: 15px; min-width: 54px; }
+    .actions { bottom: calc(var(--safe-bottom) + 82px); }
+    .picker { bottom: calc(var(--safe-bottom) + 138px); }
+}
