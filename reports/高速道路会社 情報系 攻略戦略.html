@@ -1,0 +1,1174 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>高速道路 情報系 攻略戦略</title>
+<meta name="description" content="高速道路6社の情報系攻略戦略 v2（2026-10-03）：仮説カード、ヒアリングガイド、90日計画">
+<style>
+/* Layout: sticky route-list TOC on the left, one reading column on the right; section numbers drawn as expressway-sign plates. */
+:root {
+  --bg: #f4f7f5;
+  --surface: #ffffff;
+  --surface-2: #eaf0ed;
+  --ink: #15201b;
+  --ink-2: #3f4d47;
+  --muted: #62716a;
+  --line: #d6dfda;
+  --line-strong: #a9b8b0;
+  --accent: #0b6b4f;          /* expressway-sign green */
+  --accent-ink: #ffffff;
+  --accent-soft: #e0efe8;
+  --amber: #9a5a00;
+  --amber-soft: #fbeed6;
+  --red: #b02a20;
+  --red-soft: #fbe6e3;
+  --blue: #2c55a0;
+  --blue-soft: #e4ebf8;
+  --slate: #4f5a86;
+  --slate-soft: #e8eaf4;
+  /* chart marks (validated: rank A / B / C) */
+  --rank-a: #138a5e;
+  --rank-b: #c27400;
+  --rank-c: #5b6cc0;
+  /* score scale 1..5 */
+  --s1: #f1f4f2; --s2: #dcece4; --s3: #b8dcca; --s4: #79bf9f; --s5: #1f7a55;
+  --s-ink: #15201b; --s5-ink: #ffffff;
+  --shadow: 0 1px 2px rgba(15, 40, 30, .06), 0 2px 10px rgba(15, 40, 30, .05);
+  --font: "Meiryo UI", "メイリオ", Meiryo, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --fs-xs: .75rem; --fs-sm: .8125rem; --fs-base: .9375rem; --fs-md: 1.0625rem; --fs-lg: 1.3125rem; --fs-xl: 1.75rem; --fs-2xl: 2.125rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1513; --surface: #161e1b; --surface-2: #1d2824; --ink: #e6eeea; --ink-2: #b7c5bf; --muted: #8fa099;
+    --line: #2a3632; --line-strong: #44544d; --accent: #4cc59a; --accent-ink: #062117; --accent-soft: #163a2d;
+    --amber: #f0b45a; --amber-soft: #3a2b12; --red: #ff8f84; --red-soft: #3e1d1a; --blue: #9dbcf5; --blue-soft: #1c2a42;
+    --slate: #aab4ee; --slate-soft: #252a45;
+    --rank-a: #2a9e70; --rank-b: #c98500; --rank-c: #8088e0;
+    --s1: #1a2320; --s2: #1b3629; --s3: #22523d; --s4: #2c7454; --s5: #45b184; --s-ink: #e6eeea; --s5-ink: #06150f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1513; --surface: #161e1b; --surface-2: #1d2824; --ink: #e6eeea; --ink-2: #b7c5bf; --muted: #8fa099;
+  --line: #2a3632; --line-strong: #44544d; --accent: #4cc59a; --accent-ink: #062117; --accent-soft: #163a2d;
+  --amber: #f0b45a; --amber-soft: #3a2b12; --red: #ff8f84; --red-soft: #3e1d1a; --blue: #9dbcf5; --blue-soft: #1c2a42;
+  --slate: #aab4ee; --slate-soft: #252a45;
+  --rank-a: #2a9e70; --rank-b: #c98500; --rank-c: #8088e0;
+  --s1: #1a2320; --s2: #1b3629; --s3: #22523d; --s4: #2c7454; --s5: #45b184; --s-ink: #e6eeea; --s5-ink: #06150f;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: var(--fs-base); line-height: 1.85;
+  -webkit-text-size-adjust: 100%; overflow-wrap: anywhere;
+}
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+strong { font-weight: 700; }
+.skip { position: absolute; left: -999px; top: 0; background: var(--surface); padding: 8px 12px; z-index: 10; }
+.skip:focus { left: 16px; }
+
+.page {
+  display: grid; grid-template-columns: 232px minmax(0, 1fr); gap: 40px;
+  max-width: 1280px; margin: 0 auto; padding-inline: 24px; padding-block: 28px 64px;
+}
+main { min-width: 0; max-width: 980px; }
+
+/* ---------- TOC ---------- */
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); align-self: start; max-height: calc(100vh - 32px); overflow: auto; }
+.toc summary { font-size: var(--fs-xs); letter-spacing: .12em; color: var(--muted); font-weight: 700; cursor: pointer; padding-block: 4px; list-style: none; }
+.toc summary::-webkit-details-marker { display: none; }
+.toc ol { list-style: none; margin: 8px 0 0; padding: 0 0 0 10px; border-left: 3px solid var(--line); }
+.toc li a {
+  display: block; padding: 5px 10px; margin-left: -13px; border-left: 3px solid transparent;
+  color: var(--ink-2); text-decoration: none; font-size: var(--fs-sm); line-height: 1.5;
+}
+.toc li a:hover { color: var(--accent); }
+.toc li a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 700; }
+
+/* ---------- hero ---------- */
+.hero { display: grid; gap: 20px; padding-bottom: 8px; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; font-size: var(--fs-xs); color: var(--muted); letter-spacing: .04em; }
+.eyebrow span:first-child { color: var(--accent); font-weight: 700; letter-spacing: .12em; }
+.eyebrow time { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink-2); }
+h1 { font-size: var(--fs-2xl); line-height: 1.35; margin: 0; letter-spacing: .01em; text-wrap: pretty; font-weight: 700; }
+.alert {
+  border: 1px solid var(--red); background: var(--red-soft); border-radius: 8px; padding: 14px 18px;
+  display: grid; gap: 4px;
+}
+.alert p { margin: 0; font-size: var(--fs-sm); line-height: 1.8; }
+.alert .alert-title { font-weight: 700; color: var(--red); font-size: var(--fs-base); }
+.alert .alert-title::before { content: "!"; display: inline-grid; place-items: center; width: 1.3em; height: 1.3em; border-radius: 50%; background: var(--red); color: var(--surface); font-size: .8em; margin-right: 8px; vertical-align: .1em; }
+.lede-h { font-size: var(--fs-sm) !important; letter-spacing: .12em; color: var(--muted); margin: 8px 0 -12px !important; border: 0 !important; padding: 0 !important; }
+.lede { margin: 0; font-size: var(--fs-md); line-height: 1.95; max-width: 46em; }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.kpi {
+  display: grid; grid-template-rows: auto 1fr auto; gap: 6px; padding: 14px 16px; border-radius: 8px;
+  background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; box-shadow: var(--shadow);
+}
+.kpi:hover { border-color: var(--accent); }
+.kpi-label { font-size: var(--fs-xs); color: var(--muted); line-height: 1.5; }
+.kpi-val { font-size: 1.6rem; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; color: var(--accent); align-self: center; }
+.kpi-val small { font-size: .55em; margin-left: 2px; color: var(--ink-2); }
+.kpi-sep { font-size: .7em; }
+.kpi-foot { font-size: var(--fs-xs); color: var(--ink-2); line-height: 1.55; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.kpi-date { background: var(--accent); border-color: var(--accent); }
+.kpi-date .kpi-label, .kpi-date .kpi-foot, .kpi-date .kpi-val { color: var(--accent-ink); }
+
+/* ---------- sections ---------- */
+.sec { padding-top: 36px; }
+.sec > h2 {
+  display: flex; gap: 12px; align-items: flex-start; font-size: var(--fs-xl); line-height: 1.4; margin: 0 0 18px;
+  padding-bottom: 12px; border-bottom: 2px solid var(--ink); font-weight: 700;
+}
+.h2t { text-wrap: balance; min-width: 0; }
+.plate {
+  flex: none; display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em; padding-inline: .25em;
+  background: var(--accent); color: var(--accent-ink); border-radius: 6px; font-size: .85em; font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 0 0 2px var(--accent), inset 0 0 0 3.5px var(--accent-ink); margin-top: .05em;
+}
+h3 { font-size: var(--fs-lg); line-height: 1.5; margin: 32px 0 12px; text-wrap: balance; font-weight: 700; }
+h4 { margin: 0; font-size: var(--fs-md); line-height: 1.5; }
+.sec p { margin: 0 0 14px; max-width: 46em; }
+.sec-conclusion p { font-size: var(--fs-md); line-height: 1.95; }
+.sec-conclusion { }
+.sec-conclusion > h2 { border-bottom-color: var(--accent); }
+
+/* key points */
+.kp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.kp { background: var(--surface); padding: 14px 18px; display: grid; gap: 4px; align-content: start; }
+.kp:last-child { grid-column: 1 / -1; background: var(--accent-soft); }
+.kp dt { font-weight: 700; font-size: var(--fs-sm); color: var(--accent); letter-spacing: .06em; }
+.kp dd { margin: 0; font-size: var(--fs-sm); line-height: 1.8; }
+
+/* badges */
+.conf, .tag, .pill, .rank, .pri {
+  display: inline-block; font-size: var(--fs-xs); line-height: 1.5; padding: 0 7px; border-radius: 999px; font-weight: 700;
+  white-space: nowrap; vertical-align: .08em; font-style: normal; letter-spacing: .02em;
+}
+.conf { margin-inline: 2px; border: 1px solid transparent; }
+.conf-h { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.conf-m { background: var(--amber-soft); color: var(--amber); border-color: var(--amber); }
+.conf-l { background: var(--red-soft); color: var(--red); border-color: var(--red); }
+.conf-note { font-size: var(--fs-xs); color: var(--muted); margin-left: 2px; }
+.conf-note::before { content: "（"; } .conf-note::after { content: "）"; }
+.tag { border-radius: 4px; padding: 0 4px; white-space: normal; }
+.tag-infer { background: var(--blue-soft); color: var(--blue); }
+.tag-verify { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.pill-ws { background: var(--accent); color: var(--accent-ink); }
+.pill-semi { background: var(--accent-soft); color: var(--accent); }
+.thin { color: var(--accent); }
+.pill-need-hi { background: var(--accent); color: var(--accent-ink); }
+.pill-need-mh { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+.pill-need-md { background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line-strong); }
+
+/* tables */
+.table-wrap { overflow-x: auto; margin: 4px 0 20px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); line-height: 1.7; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+thead th { background: var(--surface-2); font-size: var(--fs-xs); color: var(--ink-2); letter-spacing: .04em; white-space: nowrap; position: sticky; top: 0; }
+tbody th { font-weight: 700; }
+tbody tr:last-child > * { border-bottom: 0; }
+tbody tr:hover > * { background: color-mix(in srgb, var(--accent-soft) 45%, transparent); }
+.num { text-align: center; font-variant-numeric: tabular-nums; }
+.idmz-row td { background: var(--surface-2); color: var(--accent); font-weight: 700; text-align: center; border-top: 2px dashed var(--accent); border-bottom: 2px dashed var(--accent); letter-spacing: .06em; }
+.table-lead { font-size: var(--fs-sm); color: var(--muted); margin-bottom: 6px !important; }
+
+/* matrix */
+.matrix .wid { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.matrix .cand { min-width: 14em; }
+.matrix td:last-child { min-width: 13em; }
+.matrix .score { font-weight: 700; width: 3.4em; color: var(--s-ink); }
+.score.s1 { background: var(--s1); } .score.s2 { background: var(--s2); } .score.s3 { background: var(--s3); }
+.score.s4 { background: var(--s4); } .score.s5 { background: var(--s5); color: var(--s5-ink); }
+tbody tr:hover > .score.s1 { background: var(--s1); } tbody tr:hover > .score.s2 { background: var(--s2); }
+tbody tr:hover > .score.s3 { background: var(--s3); } tbody tr:hover > .score.s4 { background: var(--s4); }
+tbody tr:hover > .score.s5 { background: var(--s5); }
+.matrix .total { white-space: nowrap; min-width: 5.5em; }
+.tot-n { font-weight: 700; font-size: var(--fs-md); display: block; line-height: 1.3; }
+.tot-bar { display: block; height: 4px; background: var(--line); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.tot-bar i { display: block; height: 100%; background: var(--ink-2); border-radius: 2px; }
+.row-a .tot-bar i { background: var(--rank-a); }
+.matrix .judge { white-space: nowrap; min-width: 6em; }
+.matrix .judge .conf-note { display: block; white-space: normal; margin: 4px 0 0; }
+.rank { width: 1.9em; text-align: center; padding: 0; font-size: var(--fs-sm); border-radius: 4px; }
+.rank-a { background: var(--rank-a); color: #fff; }
+.rank-b { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--rank-b); }
+.rank-c { background: var(--slate-soft); color: var(--slate); border: 1px solid var(--rank-c); }
+.row-a > * { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); }
+.note-red { border-left: 3px solid var(--red); padding-left: 12px; font-size: var(--fs-sm); }
+
+/* scatter */
+.viz { margin: 8px 0 24px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; position: relative; }
+.viz-title { font-weight: 700; font-size: var(--fs-base); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--fs-xs); color: var(--ink-2); margin: 6px 0 4px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.lg-a { background: var(--rank-a); } .lg-b { background: var(--rank-b); } .lg-c { background: var(--rank-c); }
+.svg-wrap { overflow-x: auto; }
+.scatter { display: block; width: 100%; min-width: 520px; height: auto; max-width: 720px; margin: 0 auto; font-family: var(--font); }
+.scatter .grid { stroke: var(--line); stroke-width: 1; }
+.scatter .axis { stroke: var(--line-strong); stroke-width: 1; }
+.scatter .tick { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.scatter .axis-title { fill: var(--ink-2); font-size: 13px; font-weight: 700; }
+.scatter .hit { fill: transparent; }
+.scatter .dot { stroke: var(--surface); stroke-width: 2; }
+.pt-a .dot { fill: var(--rank-a); } .pt-b .dot { fill: var(--rank-b); } .pt-c .dot { fill: var(--rank-c); }
+.scatter .plabel { fill: var(--ink); font-size: 11px; font-weight: 700; }
+.scatter .pt { cursor: default; outline: none; }
+.scatter .pt:hover .dot, .scatter .pt:focus .dot { stroke: var(--ink); }
+.tooltip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: var(--fs-xs);
+  line-height: 1.6; padding: 6px 10px; border-radius: 6px; max-width: 280px; z-index: 5;
+}
+.caption { font-size: var(--fs-xs); color: var(--muted); line-height: 1.7; margin-top: 8px; max-width: 60em; }
+
+/* options A–D */
+.options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 8px 0 20px; }
+.opt { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
+.opt header { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
+.opt header h4 { flex-basis: 100%; }
+.opt-letter { font-weight: 700; font-size: var(--fs-sm); color: var(--muted); letter-spacing: .08em; }
+.opt-rec { border: 2px solid var(--accent); background: linear-gradient(var(--accent-soft), var(--accent-soft)) top / 100% 6px no-repeat, var(--surface); box-shadow: var(--shadow); }
+.opt-rec .opt-letter { color: var(--accent); }
+.rec-badge { background: var(--accent); color: var(--accent-ink); font-size: var(--fs-xs); font-weight: 700; padding: 0 8px; border-radius: 999px; }
+.opt dl, .atk dl { margin: 0; display: grid; gap: 8px; }
+.kv dt { font-size: var(--fs-xs); color: var(--muted); font-weight: 700; letter-spacing: .06em; }
+.kv dd { margin: 0; font-size: var(--fs-sm); line-height: 1.75; }
+.opt .kv-5 dd { color: var(--accent); }
+.opt .kv-6 dd { color: var(--ink-2); }
+.reco { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 14px 18px; max-width: none !important; }
+
+/* layer map */
+.diagram { margin: 8px 0 16px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.layermap { display: block; width: 100%; min-width: 640px; height: auto; font-family: var(--font); }
+.lm-it { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.lm-dx { fill: color-mix(in srgb, var(--accent-soft) 60%, var(--surface)); stroke-dasharray: 0; }
+.lm-ot { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.2; }
+.lm-field { fill: var(--bg); }
+.lm-name { fill: var(--ink); font-size: 14px; font-weight: 700; }
+.lm-sub { fill: var(--ink-2); font-size: 11.5px; }
+.lm-idmz { fill: var(--bg); }
+.lm-idmz-line { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 7 5; }
+.lm-idmz-t { fill: var(--accent); font-size: 13px; font-weight: 700; }
+.lm-flow { stroke: var(--ink-2); stroke-width: 1.6; }
+.lm-arrowhead { fill: var(--ink-2); }
+.lm-flow-t { fill: var(--ink-2); font-size: 11.5px; }
+.lm-scope line { stroke-width: 2.5; }
+.lm-scope text { font-size: 13px; font-weight: 700; }
+.lm-scope .lm-scope-sub { font-size: 11px; font-weight: 400; }
+.lm-scope-a line { stroke: var(--ink-2); } .lm-scope-a text { fill: var(--ink-2); }
+.lm-scope-b line { stroke: var(--accent); stroke-width: 4; } .lm-scope-b text { fill: var(--accent); }
+.lm-scope-c line { stroke: var(--slate); } .lm-scope-c text { fill: var(--slate); }
+.lm-scope-c .lm-dash { stroke-dasharray: 5 4; }
+.lm-out { fill: var(--muted); font-size: 12px; font-weight: 700; }
+.lm-out-sub { fill: var(--muted); font-size: 11.5px; }
+
+/* attack map */
+.attack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 8px 0 20px; }
+.atk { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
+.atk header { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.atk-wide { grid-column: 1 / -1; }
+.pri { border: 1px solid var(--line-strong); color: var(--ink-2); background: var(--surface-2); }
+.pri-p0 { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.pri-p1 { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.pri-p2 { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.atk-p0 { border: 2px solid var(--accent); }
+
+/* proposals */
+.proposal { border-top: 1px solid var(--line); padding-top: 14px; margin-bottom: 8px; }
+.proposal h4 { color: var(--accent); margin-bottom: 6px; }
+
+/* timeline */
+.timeline { list-style: none; margin: 8px 0 24px; padding: 0; position: relative; }
+.timeline::before { content: ""; position: absolute; left: 10.5em; top: 8px; bottom: 8px; width: 2px; background: var(--line-strong); }
+.tl { display: grid; grid-template-columns: 10em minmax(0, 1fr); gap: 28px; padding: 10px 0; position: relative; }
+.tl::before { content: ""; position: absolute; left: calc(10.5em - 5px); top: 17px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--line-strong); }
+.tl-when { font-weight: 700; font-size: var(--fs-sm); text-align: right; font-variant-numeric: tabular-nums; line-height: 1.6; display: grid; justify-items: end; gap: 4px; }
+.tl-body p { margin: 0 !important; }
+.tl-ev { font-weight: 700; }
+.tl-act { font-size: var(--fs-sm); color: var(--ink-2); }
+.tl-act-label { font-size: var(--fs-xs); color: var(--muted); margin-right: 8px; font-weight: 700; }
+.tl-next::before { background: var(--accent); border-color: var(--accent); width: 16px; height: 16px; left: calc(10.5em - 7px); top: 15px; }
+.tl-next .tl-body { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin-left: -8px; }
+.tl-next .tl-when { color: var(--accent); }
+.soon { font-size: var(--fs-xs); background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 0 8px; }
+.tl-past .tl-when, .tl-past .tl-body { color: var(--muted); }
+.tl-today::before { background: var(--ink); border-color: var(--ink); border-radius: 2px; transform: rotate(45deg); }
+.tl-today .tl-when, .tl-today .tl-ev { color: var(--ink); font-weight: 700; }
+.tl-today { border-top: 1px dashed var(--line-strong); border-bottom: 1px dashed var(--line-strong); }
+
+/* references */
+.refs summary { cursor: pointer; font-weight: 700; color: var(--accent); padding: 8px 0; }
+.ref-list { font-size: var(--fs-sm); padding-left: 2.2em; margin: 8px 0; display: grid; gap: 6px; }
+.ref-list li { line-height: 1.6; }
+.ref-where { display: block; font-size: var(--fs-xs); color: var(--muted); }
+.ref-url { display: block; font-size: var(--fs-xs); color: var(--muted); word-break: break-all; }
+.foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: var(--fs-xs); color: var(--muted); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 960px) {
+  .page { grid-template-columns: minmax(0, 1fr); gap: 16px; padding-inline: 16px; padding-block: 16px 48px; }
+  .toc { position: static; max-height: none; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .toc summary { font-size: var(--fs-sm); }
+  .toc summary::after { content: "（タップで開閉）"; font-weight: 400; letter-spacing: 0; margin-left: 6px; }
+  .toc ol { columns: 2; column-gap: 20px; border-left: 0; padding-left: 0; }
+  .toc li { break-inside: avoid; }
+  .toc li a { margin-left: 0; border-left: 0; padding: 4px 0; }
+}
+@media (max-width: 720px) {
+  :root { --fs-2xl: 1.5rem; --fs-xl: 1.3rem; --fs-lg: 1.125rem; --fs-md: 1rem; }
+  .options, .attack, .kp-grid { grid-template-columns: minmax(0, 1fr); }
+  .kpi-val { font-size: 1.3rem; }
+  .toc ol { columns: 1; }
+  .timeline::before { left: 5px; }
+  .tl { grid-template-columns: minmax(0, 1fr); gap: 4px; padding-left: 24px; }
+  .tl::before, .tl-next::before { left: 0; }
+  .tl-when { text-align: left; justify-items: start; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tl-next .tl-body { margin-left: 0; }
+  .sec { padding-top: 28px; }
+}
+@media (max-width: 420px) {
+  .kpis { gap: 8px; }
+  .kpi { padding: 12px; }
+}
+.tl-when .soon { display: inline-block; line-height: 1.7; white-space: nowrap; align-self: start; height: auto; }
+.scroll-hint { display: none; font-size: var(--fs-xs); color: var(--muted); margin: 4px 0 0; }
+@media (max-width: 720px) { .scroll-hint { display: block; } }
+.matrix .score { border-left: 2px solid var(--surface); border-bottom-color: var(--surface); }
+
+/* ---------- v2 additions ---------- */
+:root {
+  --field: #7a3d8f;        /* 現場知見: client-supplied field knowledge */
+  --field-soft: #f5e9f8;
+  --field-ink: #ffffff;
+  --out: #6b7570;          /* out-of-scope LOB */
+  --out-soft: #e9ecea;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --field: #d9a6ea; --field-soft: #34203c; --field-ink: #1f0f26; --out: #9aa6a0; --out-soft: #232b28; }
+}
+:root[data-theme="dark"] { --field: #d9a6ea; --field-soft: #34203c; --field-ink: #1f0f26; --out: #9aa6a0; --out-soft: #232b28; }
+
+/* revision banner */
+.rev { display: grid; gap: 6px; }
+.rev-banner { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: var(--fs-sm); background: var(--field-soft); border: 1px solid var(--field); border-radius: 8px; padding: 6px 12px; color: var(--ink); }
+.rev-v { background: var(--field); color: var(--field-ink); font-weight: 700; border-radius: 4px; padding: 0 8px; }
+.rev-banner time { font-weight: 700; font-variant-numeric: tabular-nums; }
+.rev-details summary { cursor: pointer; font-size: var(--fs-xs); color: var(--field); font-weight: 700; }
+.rev-details dl { margin: 6px 0 0; display: grid; gap: 6px; }
+.rev-item dt { font-size: var(--fs-xs); font-weight: 700; color: var(--ink-2); }
+.rev-item dd { margin: 0; font-size: var(--fs-sm); line-height: 1.75; }
+
+/* 現場知見 */
+.field-chip { display: inline-block; background: var(--field); color: var(--field-ink); font-size: var(--fs-xs); font-weight: 700; line-height: 1.5; padding: 0 7px; border-radius: 4px; vertical-align: .08em; white-space: nowrap; }
+.field-chip::before { content: "◆ "; font-size: .8em; }
+.field-src { font-size: var(--fs-xs); color: var(--field); }
+.field { margin: 8px 0 20px; border: 2px solid var(--field); background: var(--field-soft); border-radius: 10px; padding: 14px 18px 16px; }
+.field figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 8px; }
+.field-icon { color: var(--field); font-size: 1.1em; }
+.field-label { background: var(--field); color: var(--field-ink); font-weight: 700; padding: 1px 10px; border-radius: 4px; font-size: var(--fs-sm); letter-spacing: .08em; }
+.field-meta { font-size: var(--fs-xs); color: var(--field); font-weight: 700; }
+.field blockquote { margin: 0; font-size: var(--fs-md); line-height: 1.9; border-left: 3px solid var(--field); padding-left: 14px; }
+.row-field > * { background: var(--field-soft); }
+
+.tag-general { background: var(--amber-soft); color: var(--amber); }
+.pill-need-lo { background: var(--out-soft); color: var(--out); border: 1px solid var(--line-strong); }
+.cell-rest { font-size: var(--fs-xs); color: var(--ink-2); margin-left: 4px; }
+blockquote { margin: 0 0 14px; }
+
+/* segment cards (1-2) */
+.segs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 8px 0 20px; }
+.seg { border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; align-content: start; border: 1px solid var(--line); }
+.seg header { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.seg header h4 { flex-basis: 100%; }
+.seg-out { background: var(--out-soft); color: var(--ink-2); }
+.seg-out h4 { color: var(--ink-2); }
+.seg-in { background: var(--surface); border: 2px solid var(--accent); box-shadow: var(--shadow); }
+.seg-in h4 { color: var(--accent); }
+.seg-badge { font-size: var(--fs-xs); font-weight: 700; border-radius: 999px; padding: 0 9px; line-height: 1.6; }
+.seg-badge-in { background: var(--accent); color: var(--accent-ink); }
+.seg-badge-out { background: var(--surface); color: var(--out); border: 1px solid var(--out); }
+.seg-why { font-size: var(--fs-xs); color: var(--out); }
+.seg dl { margin: 0; display: grid; gap: 8px; }
+.seg-evidence { border-left: 3px solid var(--line-strong); padding-left: 12px; }
+
+/* pills */
+.seg-info { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); white-space: normal; }
+.seg-sales, .seg-fac { background: var(--out-soft); color: var(--out); border: 1px solid var(--line-strong); white-space: normal; }
+.scope-b { background: var(--accent); color: var(--accent-ink); }
+.scope-c { background: var(--slate-soft); color: var(--slate); border: 1px solid var(--slate); }
+.scope-out { background: var(--out-soft); color: var(--out); border: 1px solid var(--line-strong); }
+.scope-gray { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber); }
+
+/* criteria & notes */
+.criterion { border-radius: 8px; padding: 10px 14px; margin-bottom: 8px !important; }
+.criterion-main { background: var(--accent-soft); border: 1px solid var(--accent); }
+.criterion-aux { background: var(--surface-2); border: 1px dashed var(--line-strong); }
+.note-slate { border-left: 3px solid var(--slate); padding-left: 12px; }
+.pattern h4 { color: var(--slate); }
+
+/* option cards v2 */
+.opt-cond { border: 2px dashed var(--slate); }
+.opt-cond .opt-letter { color: var(--slate); }
+.cond-badge { background: var(--slate-soft); color: var(--slate); border: 1px solid var(--slate); font-size: var(--fs-xs); font-weight: 700; padding: 0 8px; border-radius: 999px; }
+.opt-out { background: var(--out-soft); }
+.opt-out h4, .opt-out dd { color: var(--ink-2); }
+.out-badge { background: var(--surface); color: var(--out); border: 1px solid var(--out); font-size: var(--fs-xs); font-weight: 700; padding: 0 8px; border-radius: 999px; }
+
+/* matrix v2 */
+.th-sub { font-weight: 400; }
+.new-axis { display: block; font-size: 10px; color: var(--field); font-weight: 700; letter-spacing: 0; }
+thead th.col-new { background: var(--field-soft); color: var(--field); }
+.matrix .score.col-new { box-shadow: inset 0 0 0 2px var(--field); }
+.rkcell { white-space: nowrap; min-width: 4.6em; }
+.rk2 { display: block; font-weight: 700; font-size: var(--fs-md); line-height: 1.3; }
+.rk1 { display: block; font-size: var(--fs-xs); color: var(--muted); }
+.mv { display: inline-block; font-size: var(--fs-xs); font-weight: 700; border-radius: 4px; padding: 0 5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.mv-up { background: var(--accent-soft); color: var(--accent); }
+.mv-down { background: var(--red-soft); color: var(--red); }
+.mv-same { color: var(--muted); }
+.mv-new { background: var(--field-soft); color: var(--field); }
+.rchg { display: inline-flex; align-items: center; gap: 3px; }
+.rchg-arrow { color: var(--muted); font-size: var(--fs-xs); }
+.rchg-dir { font-weight: 700; margin-left: 2px; }
+.rchg-up .rchg-dir { color: var(--accent); }
+.rchg-down .rchg-dir { color: var(--red); }
+.matrix .judge { min-width: 7em; }
+.matrix-v2 .basis { min-width: 12em; }
+.matrix-v2 .cand { min-width: 13em; }
+.scatter .axis-sub { fill: var(--muted); font-size: 11px; }
+
+/* layer map v2 */
+.lm-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--fs-xs); color: var(--ink-2); margin-bottom: 10px; }
+.lm-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; width: 18px; height: 12px; border-radius: 2px; }
+.sw-b { background: var(--accent-soft); border: 2px solid var(--accent); }
+.sw-a { border: 1.5px dashed var(--ink-2); }
+.sw-ca { background: repeating-linear-gradient(45deg, var(--slate-soft) 0 3px, var(--slate) 3px 4px); }
+.sw-cb { border: 1.5px dashed var(--slate); background: var(--surface); }
+.sw-out { background: var(--out-soft); border: 1px solid var(--line-strong); }
+.sw-idmz { height: 0; border-top: 2px dotted var(--muted); border-radius: 0; }
+.layermap { min-width: 680px; }
+.lm-band { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.lm-b-tag { fill: var(--accent); font-size: 13px; font-weight: 700; }
+.lm-lob { fill: var(--out-soft); stroke: var(--line-strong); stroke-width: 1.2; }
+.lm-info { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
+.lm-col { fill: var(--ink-2); font-size: 15px; font-weight: 700; }
+.lm-col-info { fill: var(--accent); }
+.lm-sub2 { fill: var(--ink-2); font-size: 11px; }
+.lm-hatch-bg { fill: var(--slate-soft); }
+.lm-hatch-line { stroke: var(--slate); stroke-width: 1.2; opacity: .45; }
+.lm-open { stroke: var(--slate); stroke-width: 2; stroke-dasharray: 5 3; }
+.lm-arrowhead-c { fill: var(--slate); }
+.lm-arrowhead-b { fill: var(--accent); }
+.lm-open-t { fill: var(--slate); font-size: 12px; font-weight: 700; }
+.lm-open-strip { fill: var(--slate); font-size: 11.5px; font-weight: 700; paint-order: stroke; stroke: var(--slate-soft); stroke-width: 3px; }
+.lm-provide { stroke: var(--accent); stroke-width: 2.5; }
+.lm-provide-t { fill: var(--accent); font-size: 12px; font-weight: 700; }
+.lm-idmz2 { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 2 3; }
+.lm-idmz2-t { fill: var(--muted); font-size: 10.5px; }
+.lm-a { fill: var(--surface); stroke: var(--ink-2); stroke-width: 1.4; stroke-dasharray: 5 3; }
+.lm-a-t { fill: var(--ink); font-size: 12px; font-weight: 700; }
+.lm-out-badge { fill: var(--surface); stroke: var(--out); stroke-width: 1.2; }
+.lm-out-badge-t { fill: var(--out); font-size: 12px; font-weight: 700; }
+.lm-in-badge { fill: var(--accent); }
+.lm-in-badge-t { fill: var(--accent-ink); font-size: 12px; font-weight: 700; }
+.lm-dx2 { fill: var(--surface); stroke: var(--slate); stroke-width: 1.8; stroke-dasharray: 6 4; }
+.lm-dx2-t { fill: var(--slate); font-size: 12.5px; font-weight: 700; }
+.lm-note { fill: var(--slate); font-size: 11px; }
+.band-row > *, .dx-row > * { background: var(--surface-2); }
+.band-row td { color: var(--accent); font-weight: 700; }
+.dx-row td { color: var(--slate); }
+
+@media (max-width: 720px) {
+  .segs { grid-template-columns: minmax(0, 1fr); }
+}
+.matrix-v2 thead th { white-space: normal; line-height: 1.4; vertical-align: bottom; }
+.matrix-v2 .score { width: 2.6em; padding-inline: 4px; }
+.matrix-v2 .cand { min-width: 12em; }
+.matrix-v2 .basis { min-width: 11em; }
+
+/* ---------- strategy page (field tool) ---------- */
+:root {
+  --warn: #a3201a;          /* code of conduct / NG */
+  --warn-soft: #fdecea;
+  --warn-ink: #ffffff;
+  --policy-bg: #1f2b26;     /* 【方針】 */
+  --policy-ink: #f4f7f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --warn: #ff8a7d; --warn-soft: #3d1a17; --warn-ink: #2a0b08; --policy-bg: #dfe8e3; --policy-ink: #0f1513; }
+}
+:root[data-theme="dark"] { --warn: #ff8a7d; --warn-soft: #3d1a17; --warn-ink: #2a0b08; --policy-bg: #dfe8e3; --policy-ink: #0f1513; }
+
+.page-tool main { max-width: 1040px; }
+.page-tool .sec p { max-width: 50em; }
+
+/* label badges */
+.lb { display: inline-block; font-size: var(--fs-xs); line-height: 1.5; font-weight: 700; border-radius: 4px; padding: 0 4px; vertical-align: .08em; letter-spacing: .01em; border: 1px solid transparent; }
+.lb-fact { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.lb-field { background: var(--field); color: var(--field-ink); }
+.lb-hyp { background: var(--blue-soft); color: var(--blue); }
+.lb-policy { background: var(--policy-bg); color: var(--policy-ink); }
+.lb-unconf { background: var(--out-soft); color: var(--out); border-color: var(--line-strong); }
+.lb-verify { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+.lb-general { background: var(--amber-soft); color: var(--amber); }
+.lb-plusverify { box-shadow: 0 0 0 1px var(--red); }
+
+/* header */
+.tool-hero { gap: 14px; }
+.tool-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: var(--fs-sm); padding: 8px 12px; border-radius: 8px; background: var(--surface); border: 1px solid var(--line); }
+.tool-strip .ver { background: var(--accent); color: var(--accent-ink); font-weight: 700; padding: 0 8px; border-radius: 4px; }
+.tool-strip time { font-weight: 700; font-variant-numeric: tabular-nums; }
+.tool-strip > span:nth-of-type(2) { color: var(--muted); font-size: var(--fs-xs); }
+.report-link { margin-left: auto; font-weight: 700; text-decoration: none; border: 1px solid var(--accent); border-radius: 999px; padding: 2px 12px; }
+.report-link:hover { background: var(--accent-soft); }
+.quick { display: flex; flex-wrap: wrap; gap: 8px; }
+.quick a { text-decoration: none; font-size: var(--fs-sm); font-weight: 700; padding: 4px 12px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+.quick a:hover { background: var(--accent); color: var(--accent-ink); }
+.quick a.quick-warn { background: var(--warn-soft); color: var(--warn); border-color: var(--warn); }
+.quick a.quick-warn:hover { background: var(--warn); color: var(--warn-ink); }
+.pos-box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+.pos-box summary { cursor: pointer; font-size: var(--fs-sm); font-weight: 700; color: var(--ink-2); }
+.pos-box dl { display: grid; gap: 8px; margin: 10px 0 4px; }
+.pos dt { font-size: var(--fs-xs); font-weight: 700; color: var(--muted); }
+.pos dd { margin: 0; font-size: var(--fs-sm); line-height: 1.75; }
+.pos-override { border-left: 3px solid var(--amber); padding-left: 10px; }
+.legend-box { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: var(--surface); }
+.legend-title { margin: 0 0 6px; font-size: var(--fs-xs); font-weight: 700; color: var(--muted); letter-spacing: .1em; }
+.lg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 18px; margin: 0; }
+.lg-item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: start; font-size: var(--fs-xs); line-height: 1.6; }
+.lg-item dt { white-space: nowrap; }
+.lg-item dd { margin: 0; color: var(--ink-2); }
+
+/* strategy on a page */
+.sec-sop > h2 { border-bottom-color: var(--accent); }
+.sop { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.sop-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.sop-card p { margin: 0 !important; font-size: var(--fs-sm); line-height: 1.8; }
+.sop-h { margin: 0; font-size: var(--fs-sm); letter-spacing: .08em; color: var(--accent); }
+.sop-where { grid-column: span 3; }
+.sop-how { grid-column: span 3; }
+.sop-prio { grid-column: span 2; }
+.sop-90 { grid-column: span 4; }
+.sop-cond { grid-column: 1 / -1; }
+.sop-note { color: var(--ink-2); border-top: 1px dashed var(--line); padding-top: 8px; }
+.sop-link a { font-weight: 700; font-size: var(--fs-sm); }
+.tlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: var(--fs-sm); line-height: 1.75; }
+.tlist li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: start; }
+.tchip { display: inline-grid; place-items: center; min-width: 2.2em; height: 1.6em; border-radius: 4px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.tchip-lg { font-size: var(--fs-sm); min-width: 2.6em; height: 1.9em; }
+.prio-strip { display: grid; gap: 6px; }
+.pz { display: grid; grid-template-columns: 3.2em minmax(0, 1fr); align-items: center; gap: 2px 8px; padding: 8px 10px; border-radius: 6px; text-decoration: none; color: var(--ink); border: 1px solid var(--line); }
+.pz-role { grid-row: span 2; font-weight: 700; font-size: var(--fs-xs); text-align: center; border-radius: 4px; padding: 2px 0; }
+.pz-co { font-weight: 700; }
+.pz-note { font-size: var(--fs-xs); color: var(--muted); }
+.pz-main { border: 2px solid var(--accent); }
+.pz-main .pz-role { background: var(--accent); color: var(--accent-ink); }
+.pz-sub .pz-role { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+.pz-lim { border-style: dashed; }
+.pz-lim .pz-role { background: var(--slate-soft); color: var(--slate); border: 1px solid var(--slate); }
+.cond-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.cond-list li { display: grid; grid-template-columns: 2.4em minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 12px; font-size: var(--fs-sm); border-bottom: 1px solid var(--line); }
+.cond-list li:last-child { border-bottom: 0; }
+.cond-n { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.cond-boxes { display: flex; gap: 10px; flex-wrap: wrap; }
+.cbx { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-xs); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.cbx input, .qcheck input, .chk input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; flex: none; }
+.store-note { font-size: var(--fs-xs) !important; color: var(--muted); }
+.sub-h { font-size: var(--fs-md); margin: 24px 0 8px; }
+.prio { display: inline-block; font-size: var(--fs-xs); font-weight: 700; padding: 0 8px; border-radius: 999px; white-space: nowrap; border: 1px solid var(--line-strong); color: var(--ink-2); }
+.prio-p1 { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.prio-p2 { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.prio-p3 { background: var(--slate-soft); color: var(--slate); border-color: var(--slate); }
+
+/* scope */
+.decl { background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; padding: 14px 18px; max-width: none !important; }
+.row-target > * { background: var(--accent-soft); }
+.lead-p strong:first-child { color: var(--accent); }
+
+/* T cards */
+.tcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 8px 0 18px; }
+.tcard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 10px; align-content: start; }
+.tcard header { display: grid; gap: 8px; justify-items: start; }
+.tcard h4 { font-size: var(--fs-base); }
+.more { border-top: 1px dashed var(--line); padding-top: 8px; }
+.more summary { cursor: pointer; font-size: var(--fs-xs); font-weight: 700; color: var(--accent); }
+.more-body { font-size: var(--fs-sm); line-height: 1.75; margin-top: 6px; }
+
+/* やらないこと */
+.h3-nodo { color: var(--warn); }
+.nodo { border: 2px solid var(--warn); border-radius: 10px; background: var(--warn-soft); padding: 14px 18px; margin: 4px 0 20px; }
+.nodo-title { margin: 0 0 8px !important; font-weight: 700; color: var(--warn); display: flex; align-items: center; gap: 8px; }
+.nodo-x { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; border-radius: 50%; background: var(--warn); color: var(--warn-ink); font-size: .9em; }
+.nodo-list { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; font-size: var(--fs-sm); line-height: 1.75; }
+.nodo-list li::marker { color: var(--warn); }
+
+/* hypothesis cards */
+.hfilter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 0 4px; }
+.hf-label { font-size: var(--fs-xs); font-weight: 700; color: var(--muted); margin-right: 4px; }
+.fchip { font: inherit; font-size: var(--fs-sm); padding: 3px 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-2); cursor: pointer; }
+.fchip:hover { border-color: var(--accent); color: var(--accent); }
+.fchip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.hf-count { font-size: var(--fs-xs); color: var(--muted); margin-left: 6px; font-variant-numeric: tabular-nums; }
+.hf-note { font-size: var(--fs-xs) !important; color: var(--muted); }
+.hcards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 8px 0 20px; }
+.hcard { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; align-content: start; scroll-margin-top: 16px; }
+.hcard-a { border-top: 4px solid var(--rank-a); }
+.hcard-b { border-top: 4px solid var(--rank-b); }
+.hc-head { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 8px; align-items: center; }
+.hc-code { font-weight: 700; font-size: var(--fs-lg); color: var(--ink); font-variant-numeric: tabular-nums; }
+.hc-title { grid-column: 1 / -1; margin: 0; font-size: var(--fs-md); line-height: 1.5; }
+.hc-meta { grid-column: 1 / -1; margin: 0 !important; font-size: var(--fs-xs); color: var(--muted); }
+.hc-cos { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px; }
+.co-tag { font-size: var(--fs-xs); background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; color: var(--ink-2); }
+.co-none { color: var(--muted); border-style: dashed; }
+.hc-body { margin: 0; display: grid; gap: 8px; }
+.hc-body .kv dd { font-size: var(--fs-sm); }
+.kv-仮説 dd { font-size: var(--fs-base) !important; }
+.kv-入口オファー dd { background: var(--accent-soft); border-radius: 6px; padding: 6px 10px; }
+.qlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.qlist li { padding-left: 1.1em; text-indent: -1.1em; }
+.q-first { color: var(--ink); }
+.q-second { color: var(--ink-2); }
+.q-note { color: var(--warn); font-size: var(--fs-xs); text-indent: 0 !important; padding-left: 0 !important; }
+
+/* hearing guide */
+.hg { border: 2px solid var(--accent); border-radius: 12px; background: var(--surface); padding: 12px; margin: 10px 0 20px; }
+.hg-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.hg-tab { font: inherit; font-size: var(--fs-sm); font-weight: 700; cursor: pointer; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink-2); display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1.4; text-align: left; }
+.hg-tab-note { font-size: 10.5px; font-weight: 400; color: var(--muted); }
+.hg-tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.hg-tab[aria-selected="true"] .hg-tab-note { color: var(--accent-ink); opacity: .85; }
+.hg-panel { padding-top: 12px; }
+.hg-persona { margin: 0 0 10px !important; font-size: var(--fs-sm); color: var(--ink-2); }
+.hg-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.hg-stage { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); }
+.hg-stage header { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.hg-stage h4 { font-size: var(--fs-sm); }
+.hg-stage-1 h4 { color: var(--accent); }
+.hg-q { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.qcheck { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: start; padding: 6px 4px; border-radius: 6px; cursor: pointer; font-size: var(--fs-base); line-height: 1.65; }
+.qcheck:hover { background: var(--surface-2); }
+.qcheck input { margin-top: 4px; }
+.qcheck input:checked + .qtext { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line-strong); }
+.hg-foot { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-top: 10px; }
+.ghost-btn { font: inherit; font-size: var(--fs-xs); background: transparent; border: 1px solid var(--line-strong); color: var(--ink-2); border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+.copy-btn { font: inherit; font-size: var(--fs-xs); font-weight: 700; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); cursor: pointer; white-space: nowrap; }
+.copy-btn:hover { background: var(--accent-soft); }
+.copy-btn.done { background: var(--accent); color: var(--accent-ink); }
+.post-meet { border: 1px dashed var(--accent); border-radius: 10px; padding: 12px 14px; margin: 4px 0 18px; background: var(--surface); display: grid; gap: 8px; }
+.pm-title { margin: 0 !important; font-weight: 700; font-size: var(--fs-sm); }
+.pm-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.hint { font-size: var(--fs-xs) !important; color: var(--muted); margin: 0 !important; }
+.talk { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 12px 16px; margin: 6px 0 14px; }
+.talk-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.talk-label { font-size: var(--fs-xs); font-weight: 700; color: var(--accent); letter-spacing: .06em; }
+.talk-text { margin: 0; font-size: var(--fs-md); line-height: 1.95; border-left: 3px solid var(--accent); padding-left: 14px; }
+.gf-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 6px 0 18px; }
+.gf { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.gf p { margin: 4px 0 0 !important; font-size: var(--fs-sm); line-height: 1.7; }
+.gf-tag { font-size: 10.5px; font-weight: 700; color: var(--accent); letter-spacing: .08em; }
+
+/* warning treatments */
+.h3-warn { color: var(--warn); }
+.ng-table thead th { background: var(--warn); color: var(--warn-ink); }
+.ng-table tbody th { color: var(--warn); }
+.ng-table td:nth-child(2) { font-weight: 700; }
+.table-wrap:has(.ng-table) { border: 2px solid var(--warn); }
+.code-box { border: 3px solid var(--warn); border-radius: 12px; background: var(--warn-soft); padding: 0 0 12px; margin: 14px 0 20px; overflow: hidden; scroll-margin-top: 16px; }
+.code-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; background: var(--warn); color: var(--warn-ink); padding: 10px 16px; }
+.code-sev { font-weight: 700; font-size: var(--fs-xs); border: 1px solid var(--warn-ink); border-radius: 4px; padding: 0 8px; }
+.code-title { font-weight: 700; font-size: var(--fs-md); flex: 1 1 auto; }
+.code-title .lb-policy { background: var(--warn-ink); color: var(--warn); }
+.code-head .copy-btn { border-color: var(--warn-ink); background: transparent; color: var(--warn-ink); }
+.code-list { margin: 12px 0 0; padding: 0 16px 0 2.8em; display: grid; gap: 8px; font-size: var(--fs-base); line-height: 1.75; }
+.code-list li::marker { font-weight: 700; color: var(--warn); }
+.code-foot { margin: 10px 16px 0 !important; font-size: var(--fs-sm); color: var(--ink-2); }
+.sev { display: inline-block; font-size: var(--fs-xs); font-weight: 700; padding: 0 8px; border-radius: 4px; white-space: nowrap; }
+.sev-max { background: var(--warn); color: var(--warn-ink); }
+.sev-hi { background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); }
+.sev-mid { background: var(--amber-soft); color: var(--amber); }
+.sym { font-weight: 700; margin-right: 4px; }
+.sym-best { color: var(--accent); }
+.sym-ok { color: var(--ink-2); }
+.sym-weak { color: var(--muted); }
+
+/* gantt */
+.gantt-fig { margin: 8px 0 14px; padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.gantt { display: block; width: 100%; min-width: 680px; height: auto; font-family: var(--font); }
+.g-month { stroke: var(--line); stroke-width: 1; }
+.g-mlabel { fill: var(--muted); font-size: 12px; }
+.g-wk { fill: var(--ink); font-size: 12px; font-weight: 700; }
+.g-ph { fill: var(--muted); font-size: 11px; }
+.g-bar { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.g-bar-key { fill: var(--accent); }
+.g-dates { fill: var(--ink-2); font-size: 11px; font-variant-numeric: tabular-nums; }
+.g-today { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 4 3; }
+.g-today-t { fill: var(--ink); font-size: 12px; font-weight: 700; }
+.g-m45 { stroke: var(--amber); stroke-width: 2; }
+.g-m45-t { fill: var(--amber); font-size: 12px; font-weight: 700; }
+.g-dead { stroke: var(--warn); stroke-width: 3; }
+.g-dead-t { fill: var(--warn); font-size: 12px; font-weight: 700; }
+.g-m90 { stroke: var(--slate); stroke-width: 2; }
+.g-m90-t { fill: var(--slate); font-size: 12px; font-weight: 700; }
+
+/* decision table */
+.decision thead th:nth-child(2) { background: var(--amber-soft); color: var(--amber); }
+.decision thead th:nth-child(3) { background: var(--accent-soft); color: var(--accent); }
+.decision thead th:nth-child(4) { background: var(--warn-soft); color: var(--warn); }
+.decision td:nth-child(4) { background: color-mix(in srgb, var(--warn-soft) 55%, transparent); }
+.decision tbody th { white-space: nowrap; }
+
+/* CRM stages */
+.stages { list-style: none; margin: 8px 0 18px; padding: 0; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+.stage { position: relative; background: var(--surface); border: 1px solid var(--line); padding: 10px 8px 10px 14px; display: grid; gap: 4px; align-content: start; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%); min-width: 0; }
+.stage:first-child { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%); padding-left: 10px; }
+.st-code { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.st-def { font-size: var(--fs-xs); line-height: 1.5; color: var(--ink-2); padding-right: 8px; }
+.stage-key { background: var(--accent); }
+.stage-key .st-code, .stage-key .st-def { color: var(--accent-ink); }
+
+/* checklist */
+td.chk { text-align: center; width: 3em; }
+td.stars { white-space: nowrap; color: var(--amber); }
+
+/* templates */
+.tpl { margin: 6px 0 16px; }
+.tpl-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.tpl-name { font-weight: 700; font-size: var(--fs-sm); }
+
+/* appendices */
+.appx-head { padding-top: 40px; }
+.appx-h2 { font-size: var(--fs-xl); margin: 0 0 4px; padding-bottom: 10px; border-bottom: 2px solid var(--ink); }
+.sec-app { margin-top: 10px; scroll-margin-top: 16px; }
+.appx { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.appx > summary { cursor: pointer; padding: 12px 16px; font-weight: 700; font-size: var(--fs-md); }
+.appx[open] > summary { border-bottom: 1px solid var(--line); }
+.appx-body { padding: 4px 16px 12px; }
+.appx-body h3 { margin-top: 18px; }
+
+/* toast */
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 8px; font-size: var(--fs-sm); z-index: 20; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
+.toc-sub a { padding-left: 22px !important; font-size: var(--fs-xs) !important; }
+
+@media (max-width: 960px) {
+  .sop-where, .sop-how, .sop-prio, .sop-90 { grid-column: 1 / -1; }
+  .stages { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .report-link { margin-left: 0; }
+}
+@media (max-width: 720px) {
+  .tcards, .hcards, .hg-cols, .gf-grid { grid-template-columns: minmax(0, 1fr); }
+  .stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage, .stage:first-child { clip-path: none; border-radius: 6px; padding-left: 10px; }
+  .cond-list li { grid-template-columns: 2em minmax(0, 1fr); }
+  .cond-boxes { grid-column: 2; }
+  .lg-grid { grid-template-columns: minmax(0, 1fr); }
+  .hg { padding: 10px; }
+}
+.prio-table td:nth-child(2) { white-space: nowrap; font-weight: 700; }
+.sop-nodo { grid-column: 1 / -1; border: 2px solid var(--warn); background: var(--warn-soft); }
+.sop-h-warn { color: var(--warn); display: flex; align-items: center; gap: 8px; }
+.warn-link { color: var(--warn); font-weight: 700; }
+.ng-table tbody th { min-width: 6.5em; }
+
+</style>
+<a class="skip" href="#main">本文へ移動</a>
+<div class="page page-tool">
+  <nav class="toc" aria-label="目次">
+    <details id="toc-details" open>
+      <summary>目次</summary>
+      <ol><li><a href="#sop">0. 1ページサマリー</a></li><li><a href="#s1">1. スコープと勝ち筋</a></li><li class="toc-sub"><a href="#s1-3">やらないこと</a></li><li><a href="#s2">2. ターゲット・面談ルート</a></li><li><a href="#s3">3. 仮説カード H1〜H8</a></li><li><a href="#s4">4. ヒアリングガイド</a></li><li class="toc-sub"><a href="#s4-4">聞いてはいけないこと</a></li><li><a href="#s5">5. 提案設計</a></li><li><a href="#s6">6. アクションプラン</a></li><li class="toc-sub"><a href="#s6-3">Go/No-go</a></li><li><a href="#s7">7. リスク・行動規範</a></li><li class="toc-sub"><a href="#code">行動規範</a></li><li><a href="#appendix">付録A〜D</a></li><li><a href="#refs">出典一覧</a></li></ol>
+    </details>
+  </nav>
+  <main id="main">
+    <header class="hero tool-hero">
+      <div class="tool-strip">
+        <span class="ver">戦略 v2</span><time datetime="2026-10-03">2026-10-03</time><span>レッドチームレビュー反映</span>
+        <a class="report-link" href="https://claude.ai/artifact/M8ejeTFRg4cubs9mcvBZ9n" target="_blank" rel="noopener">根拠：ホワイトスペース調査レポート v2 ↗</a>
+      </div>
+      <h1>高速道路6社 情報系攻略戦略：あたりをつけて、聞いて、提案する</h1>
+      <nav class="quick" aria-label="よく使う場所">
+        <a href="#s4-1">必ず聞く5問</a><a href="#s3">仮説カード</a><a href="#s1-3" class="quick-warn">やらないこと</a><a href="#code" class="quick-warn">行動規範</a><a href="#s4-4" class="quick-warn">NGリスト</a><a href="#s6-1">90日計画</a><a href="#s6-3">Go/No-go</a><a href="#appC">記録様式</a>
+      </nav>
+      <details class="pos-box"><summary>この資料の位置づけ（版・用途・使い方・調査レポートを上書きする箇所）</summary><dl><div class="pos"><dt>版</dt><dd><strong>v2（2026-10-03、レッドチームレビューを反映）</strong>。v1（同日）はgit履歴に残っています。元資料は『高速道路会社 情報系 ホワイトスペース調査』v2（2026-09-30）と調査ノート6本です。</dd></div><div class="pos"><dt>用途</dt><dd>①仮説を立てる（あたりをつける）→②ヒアリングで検証する→③小さな有償の入口案件を提案する、という現場の作業で使う道具です。</dd></div><div class="pos"><dt>使い方</dt><dd>0章で全体像をつかみ、2章で会う相手と面談の取り方を決めます。3章の仮説カードを1〜2枚選び、4章の「必ず聞く5問」で面談します。面談の後は付録Cの記録様式で記録し、仮説を更新します。</dd></div><div class="pos pos-override"><dt>調査レポートv2を上書きする箇所</dt><dd>本書は調査レポートv2の9-1（会社別攻略マップのうち首都高の優先度と「何を」）、9-2（提案2の首都高向けの訴求）、9-3（「改善措置要求への対応として提案2」の行）を上書きします。理由は、<strong>首都高の契約・調達領域には2026年度中は提案しない</strong>方針に変えたためです（2-1、4-4を参照）。</dd></div></dl></details>
+      <div class="legend-box"><p class="legend-title">表記ルール</p><dl class="lg-grid"><div class="lg-item"><dt><span class="lb lb-fact">【事実】</span></dt><dd>Web上の公開情報（リンク付き）。ただし調査時は一次資料の本文にアクセスできず、検索要約に基づいている</dd></div><div class="lg-item"><dt><span class="lb lb-field">【現場知見】</span></dt><dd>依頼者提供の現場知見（2026-09-30）。この資料の前提であり、Web由来の推論より優先する</dd></div><div class="lg-item"><dt><span class="lb lb-hyp">【仮説】</span></dt><dd>筆者の推論。ヒアリングで検証する対象</dd></div><div class="lg-item"><dt><span class="lb lb-policy">【方針】</span></dt><dd>私たちの行動上の決定</dd></div><div class="lg-item"><dt><span class="lb lb-unconf">【未確認】</span></dt><dd>調査の検索範囲で見つからなかったもの（存在しないことを意味しない）</dd></div><div class="lg-item"><dt><span class="lb lb-general">〔一般知識・要確認〕</span></dt><dd>調査ノートに出典がない一般的な制度・業界慣行の知識。使う前に確認する</dd></div><div class="lg-item"><dt><span class="lb lb-verify">【要一次確認】</span></dt><dd>提案書や面談資料に載せる前に、一次資料で照合が必要なもの</dd></div></dl></div>
+    </header>
+    <section id="sop" class="sec sec-sop"><h2><span class="plate" aria-hidden="true">0</span><span class="h2t">1ページサマリー（Strategy on a page）</span></h2><div class="sop"><article class="sop-card sop-where"><h3 class="sop-h">どこで戦うか</h3><p>本社管理部門（情報システム・経営企画・総務・人事・経理・法務・契約/調達）が予算を持ち、物品・役務で発注するIT/DXと、全社共通基盤（ID・ネットワーク・セキュリティ・生成AI・文書/ナレッジ）で戦います。施設系（交通管制・電気通信・情報板・CCTV）と営業系（ETC・料金・お客さま）のLOBシステムは、工事・オンプレ・既存メーカーの世界なので戦いません。<span class="lb lb-field">【現場知見】</span></p></article><article class="sop-card sop-how"><h3 class="sop-h">どう勝つか（3つの勝ち筋）</h3><ol class="tlist"><li><span class="tchip">T1</span><span><strong>担い手不足のもとで、増え続ける更新事業の事務を、限られた人員で回せるようにする</strong>。</span></li><li><span class="tchip">T2</span><span>工事の世界には、LOBの工事そのものではなく「契約事務」から入る。ただし契約部門が管理部門に属することを45日以内に検証する。</span></li><li><span class="tchip">T3</span><span>管理部門で定着させた共通基盤（生成AI・ナレッジ）を、LOBに開放する。</span></li></ol><p class="sop-note">NEXCO3社では、初年度は<strong>NSSの協力会社として再委託を受けるルートを主にします</strong>。直接提案は研修とSaaSに限り、NSSの本業（基幹・運用・IT企画・セキュリティ規程）とは衝突させません。</p></article><article class="sop-card sop-prio"><h3 class="sop-h">会社の優先順位</h3><div class="prio-strip"><a class="pz pz-main" href="#s2-1"><span class="pz-role">主攻</span><span class="pz-co">NEXCO東日本</span></a><a class="pz pz-sub" href="#s2-1"><span class="pz-role">副攻</span><span class="pz-co">阪神高速</span></a><a class="pz pz-lim" href="#s2-1"><span class="pz-role">限定</span><span class="pz-co">首都高</span><span class="pz-note">技術部DX推進室のみ</span></a></div></article><article class="sop-card sop-90"><h3 class="sop-h">最初の90日（〜2027年1月8日）</h3><p>主攻はNEXCO東日本、副攻は阪神高速です。首都高は技術部DX推進室への単独テーマに限ります。</p><p>第1週に競争参加資格を確認・申請し、デスクリサーチ★★★を進めます。第3〜6週で面談を依頼し、2〜4件を実施します。第7〜10週で2回目の面談と課題の定量化を行います。<strong>12月18日までに有償の入口提案を1〜2件</strong>出します。</p><p>狙いは、2027年度の年度途中の少額役務か、2028年度予算への織り込みです。2027年度予算への織り込みは、時期的に間に合わない前提で動きます<span class="lb lb-general">〔一般知識・要確認〕</span>。</p><p class="sop-link"><a href="#s6-1">90日計画のタイムライン →</a></p></article><article class="sop-card sop-nodo"><h3 class="sop-h sop-h-warn"><span class="nodo-x" aria-hidden="true">×</span>やらないこと（1-3）</h3><ul class="nodo-list"><li>施設系・営業系の工事案件への応札・提案。工事の入札には、建設業許可・経営事項審査・等級格付が要ります<span class="lb lb-general">〔一般知識・要確認〕</span>。</li><li>ETC・料金・交通管制・保全データ基盤への提案。</li><li>NSS・情報技術の基幹系・運用・IT企画・セキュリティ規程を置き換える提案、またはそれと競合する直接提案。</li><li>ETC障害や首都高の官製談合を、話題のきっかけや選定理由にすること。</li><li>無償のPoC、無償の作業。無償で出すのは論点メモまでとします。</li><li>評価基準や仕様への関与（仕様誘導）。</li></ul><p class="sop-link"><a href="#code" class="warn-link">行動規範（重大度：最大）→</a>　<a href="#s4-4" class="warn-link">聞いてはいけないこと・言ってはいけないこと →</a></p></article><article class="sop-card sop-cond"><h3 class="sop-h">成立条件（What must be true）</h3><p>次の6つを、会社ごとに90日以内に検証します。</p><ol class="cond-list"><li><span class="cond-n">(1)</span><span class="cond-t">管理部門が自部門の業務DXについて予算を持ち、発注できる。</span><span class="cond-boxes"><label class="cbx"><input type="checkbox" id="cond-1-e" data-store="cond-1-e"><span>東日本</span></label><label class="cbx"><input type="checkbox" id="cond-1-h" data-store="cond-1-h"><span>阪神</span></label><label class="cbx"><input type="checkbox" id="cond-1-s" data-store="cond-1-s"><span>首都高</span></label></span></li><li><span class="cond-n">(2)</span><span class="cond-t">物品・役務の資格で、必要な区分・等級を取れる。</span><span class="cond-boxes"><label class="cbx"><input type="checkbox" id="cond-2-e" data-store="cond-2-e"><span>東日本</span></label><label class="cbx"><input type="checkbox" id="cond-2-h" data-store="cond-2-h"><span>阪神</span></label><label class="cbx"><input type="checkbox" id="cond-2-s" data-store="cond-2-s"><span>首都高</span></label></span></li><li><span class="cond-n">(3)</span><span class="cond-t">情報系でクラウド・SaaSが使える。</span><span class="cond-boxes"><label class="cbx"><input type="checkbox" id="cond-3-e" data-store="cond-3-e"><span>東日本</span></label><label class="cbx"><input type="checkbox" id="cond-3-h" data-store="cond-3-h"><span>阪神</span></label><label class="cbx"><input type="checkbox" id="cond-3-s" data-store="cond-3-s"><span>首都高</span></label></span></li><li><span class="cond-n">(4)</span><span class="cond-t">NSS・情報技術が、協力会社としての参画を受け入れる。</span><span class="cond-boxes"><label class="cbx"><input type="checkbox" id="cond-4-e" data-store="cond-4-e"><span>東日本</span></label><label class="cbx"><input type="checkbox" id="cond-4-h" data-store="cond-4-h"><span>阪神</span></label><label class="cbx"><input type="checkbox" id="cond-4-s" data-store="cond-4-s"><span>首都高</span></label></span></li><li><span class="cond-n">(5)</span><span class="cond-t">契約部門が管理部門に属し、契約事務のシステム・業務改善の予算を持つ。</span><span class="cond-boxes"><label class="cbx"><input type="checkbox" id="cond-5-e" data-store="cond-5-e"><span>東日本</span></label><label class="cbx"><input type="checkbox" id="cond-5-h" data-store="cond-5-h"><span>阪神</span></label><label class="cbx"><input type="checkbox" id="cond-5-s" data-store="cond-5-s"><span>首都高</span></label></span></li><li><span class="cond-n">(6)</span><span class="cond-t">上流を受託しても、後の入札に参加できる。</span><span class="cond-boxes"><label class="cbx"><input type="checkbox" id="cond-6-e" data-store="cond-6-e"><span>東日本</span></label><label class="cbx"><input type="checkbox" id="cond-6-h" data-store="cond-6-h"><span>阪神</span></label><label class="cbx"><input type="checkbox" id="cond-6-s" data-store="cond-6-s"><span>首都高</span></label></span></li></ol><p>判定と撤退の基準は6-3にあります。</p><p class="store-note">チェックはこの端末のブラウザにだけ保存されます（他の人とは共有されません）。</p></article></div><h3 class="sub-h" id="prio-glance">ひと目で分かる優先順位</h3><div class="table-wrap" tabindex="0"><table class="prio-table" style="min-width:920px"><thead><tr><th scope="col">優先</th><th scope="col">会社</th><th scope="col">最初に会う相手</th><th scope="col">持参する仮説カード</th><th scope="col">最初に渡す資料（give-first）</th><th scope="col">入口オファー</th></tr></thead><tbody><tr><th scope="row"><span class="prio prio-p1">1（主攻）</span></th><td>NEXCO東日本</td><td>経営企画本部 情報システム部 → 人事・契約担当（紹介経由）</td><td>H1 生成AI定着、H3 人材、H2 契約事務（45日判定まで仮置き）</td><td>「インフラ企業の生成AI定着の型」1枚</td><td>O1（直接、研修）。システムが絡む部分はNSS経由</td></tr><tr><th scope="row"><span class="prio prio-p2">2（副攻）</span></th><td>阪神高速</td><td>経営企画部 情報システム室 → 総務・法務</td><td>H5 法務・規程、H4 管理部門SaaS、H2 PROZITの定着</td><td>「規程・契約ナレッジ活用の論点メモ」</td><td>O3（有償PoC）</td></tr><tr><th scope="row"><span class="prio prio-p3">3（限定）</span></th><td>首都高</td><td><strong>技術部DX推進室のみ</strong>（定義上はC'(b)の条件付きスコープ）</td><td>H1の変形「224人の次：規程参照とAIガバナンス」</td><td>「生成AIガバナンスの論点メモ」</td><td>O1の変形。<strong>契約・総務には2026年度中は接触しない</strong></td></tr><tr><th scope="row"><span class="prio prio-p4">4</span></th><td>NEXCO中日本</td><td>業務改革推進部（要確認）</td><td>H4</td><td>―</td><td>東日本・阪神の実績が出てから</td></tr><tr><th scope="row"><span class="prio prio-p4">5</span></th><td>NEXCO西日本</td><td>NEXCO西日本情報テクノロジー（協力会社として）</td><td>H6</td><td>―</td><td>再委託から</td></tr><tr><th scope="row"><span class="prio prio-p4">6</span></th><td>本四高速</td><td>未確認</td><td>―</td><td>―</td><td>当面は着手しない</td></tr></tbody></table></div></section><section id="s1" class="sec"><h2><span class="plate" aria-hidden="true">1</span><span class="h2t">スコープ宣言と3つの勝ち筋</span></h2><h3 id="s1-1">1-1. スコープ宣言（図にできる1段落）</h3><p class="decl"><strong>情報系とは、高速道路会社およびそのグループにおいて、本社管理部門（情報システム・経営企画・総務・人事・経理・法務・契約/調達）が発注・保有するIT/DXと、全社共通基盤（ID・ネットワーク・セキュリティ・生成AI・文書/ナレッジ）をいう（定義B'）。事業部門（施設系・営業系ほか）が工事等で発注・保有するシステムは含まない。横断DXは、(a) 情報系が共通サービスとして提供し事業部門が利用する場合、または (b) コーポレート機能（経営企画・DX推進・リスク管理）がオーナーとなる場合に限り含む（条件付き拡張C'）。</strong></p><figure class="diagram"><div class="lm-legend"><span><i class="sw sw-b"></i>B'＝情報系の列＋全社共通基盤（対象）</span><span><i class="sw sw-a"></i>A'＝情シス所管IT</span><span><i class="sw sw-ca"></i>C'(a)＝共通サービスをLOBへ開放</span><span><i class="sw sw-cb"></i>C'(b)＝コーポレート機能がオーナー（案件ごとに判定）</span><span><i class="sw sw-out"></i>対象外＝LOBが工事等で発注・保有</span></div><p class="scroll-hint">図は横にスクロールできます →</p><div class="svg-wrap" tabindex="0"><svg class="layermap" viewBox="0 0 820 562" role="img" aria-label="縦割りマトリクスのレイヤーマップ。最上段に全社共通基盤の帯、その下に施設系・営業系・情報系（管理部門）の3列。情報系の列と共通基盤が推奨定義B'の対象で、施設系と営業系は対象外。共通基盤からLOB列への矢印はC'(a)の共通サービス開放。DX推進部門は営業系と情報系にまたがる独立した買い手で、スコープは案件ごとに判定。">
+  <defs>
+    <marker id="lm2-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="lm-arrowhead-c"/>
+    </marker>
+    <marker id="lm2-arrow-b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" class="lm-arrowhead-b"/>
+    </marker>
+    <pattern id="lm2-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" class="lm-hatch-bg"/>
+      <line x1="0" y1="0" x2="0" y2="7" class="lm-hatch-line"/>
+    </pattern>
+  </defs>
+
+  <!-- shared band (B') -->
+  <rect class="lm-band" x="20" y="12" width="780" height="86" rx="6"/>
+  <text class="lm-name" x="36" y="38">全社共通基盤（情報系が提供）</text>
+  <text class="lm-b-tag" x="784" y="38" text-anchor="end">B'（推奨）</text>
+  <text class="lm-sub" x="36" y="62">ID・認証／社内NW・端末／セキュリティbaseline／生成AI基盤／文書・規程・ナレッジ基盤</text>
+  <text class="lm-sub" x="36" y="82">共通マスタ（組織・社員・取引先・契約）</text>
+
+  <!-- C'(a): band opened to LOB columns -->
+  <line class="lm-open" x1="145" y1="100" x2="145" y2="147" marker-end="url(#lm2-arrow)"/>
+  <text class="lm-open-t" x="155" y="128">C'(a) 開放</text>
+  <line class="lm-open" x1="410" y1="100" x2="410" y2="147" marker-end="url(#lm2-arrow)"/>
+  <text class="lm-open-t" x="420" y="128">C'(a) 開放</text>
+  <!-- info column provides the band -->
+  <line class="lm-provide" x1="675" y1="148" x2="675" y2="103" marker-end="url(#lm2-arrow-b)"/>
+  <text class="lm-provide-t" x="685" y="128">提供・運用</text>
+
+  <!-- 施設系 -->
+  <rect class="lm-lob" x="20" y="150" width="250" height="312" rx="6"/>
+  <rect x="21" y="151" width="248" height="26" fill="url(#lm2-hatch)"/>
+  <text class="lm-open-strip" x="32" y="169">C'(a) 共通サービスを利用</text>
+  <text class="lm-col" x="32" y="204">施設系</text>
+  <text class="lm-sub" x="32" y="226">発注：施設部門・管制部門・支社・事務所</text>
+  <text class="lm-sub2" x="32" y="250">交通管制・電気通信・情報板・CCTV</text>
+  <text class="lm-sub2" x="32" y="268">トンネル防災・施設監視・ETC路側機器</text>
+  <line class="lm-idmz2" x1="28" y1="284" x2="262" y2="284"/>
+  <text class="lm-idmz2-t" x="32" y="300">IDMZ（補助線）：大半がIDMZより下</text>
+  <text class="lm-sub2" x="32" y="328">調達：工事請負（運用は役務）</text>
+  <text class="lm-sub2" x="32" y="347">環境：オンプレ</text>
+  <text class="lm-sub2" x="32" y="366">既存：NEC・東芝インフラ・三菱重工ほか</text>
+  <rect class="lm-out-badge" x="32" y="422" width="226" height="26" rx="13"/>
+  <text class="lm-out-badge-t" x="145" y="440" text-anchor="middle">工事発注・対象外</text>
+
+  <!-- 営業系 -->
+  <rect class="lm-lob" x="285" y="150" width="250" height="312" rx="6"/>
+  <rect x="286" y="151" width="248" height="26" fill="url(#lm2-hatch)"/>
+  <text class="lm-open-strip" x="297" y="169">C'(a) 共通サービスを利用</text>
+  <text class="lm-col" x="297" y="204">営業系</text>
+  <text class="lm-sub" x="297" y="226">発注：営業・料金部門、SA/PA・新事業部門</text>
+  <text class="lm-sub2" x="297" y="250">料金中央系・料金収受・ETC利用照会</text>
+  <text class="lm-sub2" x="297" y="268">お客さまセンター（要確認）・Web・アプリ</text>
+  <line class="lm-idmz2" x1="293" y1="284" x2="527" y2="284"/>
+  <text class="lm-idmz2-t" x="297" y="300">IDMZ：料金中央系は境界、顧客接点は上</text>
+  <text class="lm-sub2" x="297" y="328">調達：工事・賃貸借・グループ会社・役務</text>
+  <text class="lm-sub2" x="297" y="347">環境：料金系はオンプレ、</text>
+  <text class="lm-sub2" x="297" y="364">　　　顧客接点の一部はクラウド</text>
+  <text class="lm-sub2" x="297" y="385">既存：ハイウェイ・トール・システムほか</text>
+  <rect class="lm-out-badge" x="297" y="422" width="226" height="26" rx="13"/>
+  <text class="lm-out-badge-t" x="410" y="440" text-anchor="middle">対象外（お客さまセンターは要確認）</text>
+
+  <!-- 情報系（管理部門） -->
+  <rect class="lm-info" x="550" y="150" width="250" height="312" rx="6"/>
+  <text class="lm-col lm-col-info" x="562" y="178">情報系（管理部門）</text>
+  <text class="lm-sub" x="562" y="200">発注：情シス・経営企画・総務・人事・</text>
+  <text class="lm-sub" x="562" y="217">経理・法務・契約/調達</text>
+  <rect class="lm-a" x="560" y="230" width="230" height="82" rx="4"/>
+  <text class="lm-a-t" x="570" y="249">A' 情シス所管IT</text>
+  <text class="lm-sub2" x="570" y="267">会計・人事給与（NSS／情報技術）</text>
+  <text class="lm-sub2" x="570" y="284">グループウェア・端末/NW</text>
+  <text class="lm-sub2" x="570" y="301">ID・情報セキュリティ</text>
+  <text class="lm-sub" x="562" y="334">＋ 契約・入札システム、法務・文書</text>
+  <text class="lm-sub" x="562" y="353">＋ 人事・労務、経営管理・BI</text>
+  <text class="lm-idmz2-t" x="562" y="372">IDMZ：上</text>
+  <text class="lm-sub2" x="562" y="391">調達：物品・役務</text>
+  <text class="lm-sub2" x="562" y="408">環境：オンプレ＋クラウド・SaaS</text>
+  <rect class="lm-in-badge" x="562" y="422" width="226" height="26" rx="13"/>
+  <text class="lm-in-badge-t" x="675" y="440" text-anchor="middle">対象（B'・推奨）</text>
+
+  <!-- DX推進: straddles 営業系 and 情報系 -->
+  <rect class="lm-dx2" x="300" y="480" width="470" height="70" rx="6"/>
+  <text class="lm-dx2-t" x="316" y="503">DX推進部門（技術・DX本部／技術部）＝独立した買い手</text>
+  <text class="lm-sub" x="316" y="523">全社共通の成果物なら C'(b)、LOB固有なら対象外</text>
+  <text class="lm-sub" x="316" y="541">スコープは案件ごとに判定</text>
+  <text class="lm-note" x="20" y="502">C'(b)：コーポレート機能</text>
+  <text class="lm-note" x="20" y="519">（経営企画・リスク管理・</text>
+  <text class="lm-note" x="20" y="536">内部監査）がオーナーの横断DX</text>
+</svg>
+</div><figcaption class="caption">図にする場合は、最上段に「全社共通基盤」の帯を横一列に置き、その下に「施設系｜営業系｜情報系（管理部門）」の3列を並べます。情報系の列だけを「対象」として塗ります。DX推進部門は、技術・LOB側と情報系の間にまたがる箱として描き、「C'(b)：案件ごとに判定」と注記します。（図は調査レポートv2の7-5と同じ構造です。）</figcaption></figure><div class="table-wrap" tabindex="0"><table class="" style="min-width:920px"><thead><tr><th scope="col">セグメント</th><th scope="col">予算オーナー</th><th scope="col">調達形態</th><th scope="col">環境</th><th scope="col">既存プレイヤー</th><th scope="col">私たちの扱い</th></tr></thead><tbody><tr><th scope="row">施設系</th><td>施設・管制部門</td><td>工事請負</td><td>オンプレ</td><td>NEC・東芝インフラ・三菱重工ほか</td><td>戦わない（自社の施設系チームの担当。2-5参照）</td></tr><tr><th scope="row">営業系</th><td>営業・料金部門</td><td>工事・賃貸借・グループ会社</td><td>オンプレ（顧客接点の一部はクラウド）</td><td>ハイウェイ・トール・システム、トール系子会社</td><td>戦わない（お客さまセンターのオーナーは要確認）</td></tr><tr class="row-target"><th scope="row">情報系</th><td>情シス＋管理部門</td><td>物品・役務</td><td>オンプレ＋クラウド・SaaS</td><td>NSS、情報技術、リース会社、SaaSベンダー</td><td><strong>主戦場</strong></td></tr></tbody></table></div><p>根拠は次のとおりです。<span class="lb lb-field">【現場知見】</span>縦割りが強く、施設系・営業系はそれぞれの中で完結し、情報系は関与しません。LOBの発注は工事が主で、オンプレが基本です。<span class="lb lb-fact">【事実】</span>NEXCO西日本の施設職がETC・交通管制を担当しています（<a href="https://corp.w-nexco.co.jp/recruit/w-nexco/special/attention.html" target="_blank" rel="noopener">施設職入門</a>）。NEXCO東日本では、情報システム部が経営企画本部の下、DX推進部が技術・DX本部の下にあります（<a href="https://www.e-nexco.co.jp/en/company/overview/organization/" target="_blank" rel="noopener">組織図</a>）。首都高のDX推進室は技術部の下にあります（<a href="https://www.tecmex.or.jp/technology-lecture/%E7%AC%AC25%E5%9B%9E%EF%BC%9A%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%AE%E6%9C%AA%E6%9D%A5%E3%82%92%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E6%94%AF%E3%81%88%E3%82%8B/" target="_blank" rel="noopener">TECMEX講演</a>）。組織情報はいずれも検索要約経由です<span class="lb lb-verify">【要一次確認】</span>。</p><h3 id="s1-2">1-2. 3つの勝ち筋</h3><div class="tcards"><article class="tcard"><header><span class="tchip tchip-lg">T1</span><h4><strong>担い手不足のもとで、増え続ける更新事業の事務を、限られた人員で回す</strong></h4></header><dl><div class="kv"><dt>なぜ勝てるか</dt><dd>2115年まで続く更新事業で、工事・契約・審査の事務は増えます。一方で各社は担い手不足・人手不足を経営課題に掲げています。管理部門の「処理時間・属人化・リードタイム」を改善することは、LOBの予算を奪わずに中計の人材・生産性の目標に効きます</dd></div></dl><details class="more"><summary>根拠</summary><div class="more-body"><span class="lb lb-fact">【事実】</span>2023年の法改正で料金徴収期限を2115年まで延長し、更新事業の財源を確保（<a href="https://www.aba-j.or.jp/info/industry/19930/" target="_blank" rel="noopener">日本自動車会議所</a>）。阪神高速の中計の重点領域は「担い手不足への対応」（<a href="https://www.hanshin-exp.co.jp/company/files/chukikeieikeikaku2026-2028.pdf" target="_blank" rel="noopener">中計PDF</a>）。NEXCO中日本の中計は人手不足を経営環境の変化として明記（<a href="https://r2sj.net/news/21896" target="_blank" rel="noopener">R2SJ</a>）。NEXCO東日本の中計は「DXにより業務の生産性を向上させ、人材育成により能力を高める」（<a href="https://www.e-nexco.co.jp/pressroom/head_office/2026/0422/00016154.html" target="_blank" rel="noopener">プレスリリース</a>）。DX人材の不足は85.5%（<a href="https://www.ipa.go.jp/digital/chousa/dx-trend/dx-trend-2026.html" target="_blank" rel="noopener">IPA</a>）</div></details></article><article class="tcard"><header><span class="tchip tchip-lg">T2</span><h4><strong>工事の世界には「契約事務」から入る</strong></h4></header><dl><div class="kv"><dt>なぜ勝てるか</dt><dd>LOBの工事は取れません。しかし工事の入札公告から契約、変更契約、検査・支払までの事務は、管理部門の業務である可能性が高いです。<strong>この前提は45日以内に検証し、成り立たなければH2を降格します</strong>（6-3）</dd></div></dl><details class="more"><summary>根拠</summary><div class="more-body"><span class="lb lb-fact">【事実】</span>NEXCO東日本の入札公告検索は1,900件超、契約事務処理要領は令和8年3月26日に最終改正（<a href="https://www.e-nexco.co.jp/bids/public_notice/search_service" target="_blank" rel="noopener">検索</a>、<a href="https://www.e-nexco.co.jp/assets/pdf/bids/stipulation/const01.pdf" target="_blank" rel="noopener">要領</a>）。阪神高速は調達ポータル「PROZIT」を全社展開中（<a href="https://www.hanshin-exp.co.jp/company/topics/files/20260414_pressrelease_1.pdf" target="_blank" rel="noopener">2026年度の主な取り組み</a>）。<span class="lb lb-hyp">【仮説】</span>契約部門は管理部門に属し、事務システムの予算を持つ<span class="lb lb-verify">【要一次確認】</span></div></details></article><article class="tcard"><header><span class="tchip tchip-lg">T3</span><h4><strong>管理部門で定着させてから、LOBに共通基盤として開放する</strong></h4></header><dl><div class="kv"><dt>なぜ勝てるか</dt><dd>生成AIには「導入しても使われない」壁があります。管理部門で定着の型を作り、同じ基盤をLOBに提供すれば、LOBのシステムに触れずに横断DXに関われます</dd></div></dl><details class="more"><summary>根拠</summary><div class="more-body"><span class="lb lb-fact">【事実】</span>首都高は動画研修を9割超が受講しても定着せず、対面研修23回で月100回以上の利用者が22人→224人に増えた（<a href="https://www.businessinsider.jp/article/2608-shutoko-google-gemini-dx-adoption/" target="_blank" rel="noopener">Business Insider</a>）</div></details></article></div><p class="lead-p"><strong>背景（効果の主語にはしない）</strong>：2025年度決算では、料金収入は増加または過去最高でしたが、高速道路事業は赤字か薄利にとどまりました。NEXCO西日本（<a href="https://www.nikkei.com/article/DGXZQOUF081BX0Y6A600C2000000/" target="_blank" rel="noopener">日経</a>）、NEXCO中日本（<a href="https://www.nikkei.com/article/DGXZQOFD094MI0Z00C26A6000000/" target="_blank" rel="noopener">日経</a>）、NEXCO東日本・阪神・本四（<a href="https://www.firstaccess.co.jp/fa-blog/archives/21137" target="_blank" rel="noopener">ファーストアクセス 東</a>、<a href="https://www.firstaccess.co.jp/fa-blog/archives/21156" target="_blank" rel="noopener">阪神</a>、<a href="https://www.firstaccess.co.jp/fa-blog/archives/21163" target="_blank" rel="noopener">本四</a>）、首都高は2024年度の数字（<a href="https://webun.jp/articles/-/818084" target="_blank" rel="noopener">共同通信配信</a>）です<span class="lb lb-fact">【事実（確度は中〜高）】</span>。ただし、NEXCO西日本の「管理費用2,390億円」は植栽伐採・舗装補修など道路の維持管理の費用で、本社管理部門の経費ではありません。また償還主義のもとでは、そもそも料金に利益を見込まない設計です<span class="lb lb-general">〔一般知識・要確認〕</span>。このため<span class="lb lb-policy">【方針】</span>「赤字だから管理部門の経費を削る」という言い方はしません。管理費の話は背景の<span class="lb lb-hyp">【仮説】</span>にとどめ、効果は<strong>削減時間、属人化の解消、処理リードタイム</strong>で語ります。</p><h3 id="s1-3" class="h3-nodo">1-3. やらないこと<span class="lb lb-policy">【方針】</span></h3><div class="nodo"><p class="nodo-title"><span class="nodo-x" aria-hidden="true">×</span>次のことはやりません。</p><ul class="nodo-list"><li>施設系・営業系の工事案件への応札・提案。工事の入札には、建設業許可・経営事項審査・等級格付が要ります<span class="lb lb-general">〔一般知識・要確認〕</span>。</li><li>ETC・料金・交通管制・保全データ基盤への提案。</li><li>NSS・情報技術の基幹系・運用・IT企画・セキュリティ規程を置き換える提案、またはそれと競合する直接提案。</li><li>ETC障害や首都高の官製談合を、話題のきっかけや選定理由にすること。</li><li>無償のPoC、無償の作業。無償で出すのは論点メモまでとします。</li><li>評価基準や仕様への関与（仕様誘導）。</li></ul></div></section><section id="s2" class="sec"><h2><span class="plate" aria-hidden="true">2</span><span class="h2t">ターゲット、面談の取り方、社内の調整</span></h2><h3 id="s2-1">2-1. 会社の優先順位（v1から変更）</h3><p class="lead-p"><strong>判断</strong>：v1では首都高を1位にしていましたが、v2では1位をNEXCO東日本、2位を阪神高速とし、首都高は3位でDX推進室への単独テーマに限ります。理由は3つです。</p><p>第一に、首都高で私たちの入口になりうるDX推進室は、社員講師による定着策を自ら実行して成果を発信しています（<span class="lb lb-fact">【事実】</span><a href="https://www.businessinsider.jp/article/2608-shutoko-google-gemini-dx-adoption/" target="_blank" rel="noopener">Business Insider</a>）。これはH1の「内製チームあり」という偽シグナルに当たり、外部の支援余地は「次の段階」に限られます。</p><p>第二に、首都高は2026年4月22日に改善措置要求を受けています（<span class="lb lb-fact">【事実】</span><a href="https://www.jftc.go.jp/houdou/pressrelease/2026/apr/260422_yonjyo.shutoko.html" target="_blank" rel="noopener">公取委</a>）。措置への対応中の契約・総務部門は、業者との接触を絞ると考えるのが妥当です<span class="lb lb-hyp">【仮説】</span>。</p><p>第三に、阪神高速は管理部門でSaaS（LAWGUE）を実際に購入しており（<span class="lb lb-fact">【事実】</span><a href="https://prtimes.jp/main/html/rd/p/000000109.000037680.html" target="_blank" rel="noopener">PR TIMES</a>）、成立条件(1)(3)の証拠が6社で最も強いです。NEXCO東日本は、情報システム部が経営企画本部の下にあり（<span class="lb lb-fact lb-plusverify">【事実・要一次確認】</span>）、新中計で生産性と人材育成を明記しています。規模も大きいため、主攻とします。</p><div class="table-wrap" tabindex="0"><table class="prio-table" style="min-width:920px"><thead><tr><th scope="col">優先</th><th scope="col">会社</th><th scope="col">選んだ理由</th><th scope="col">分かっている買い手</th><th scope="col">最初に検証すること</th><th scope="col">注意</th></tr></thead><tbody><tr><th scope="row"><span class="prio prio-p1">1</span></th><td><strong>NEXCO東日本</strong></td><td><span class="lb lb-fact">【事実】</span>新中計（2026-2030）の初年度で、生産性と人材育成を明記。<span class="lb lb-fact lb-plusverify">【事実・要一次確認】</span>情報システム部が経営企画本部の下。<span class="lb lb-hyp">【仮説】</span>管理部門の窓口が組織図上で特定しやすい</td><td>経営企画本部 情報システム部、人事、契約担当、NSS</td><td>生成AIの導入状況<span class="lb lb-unconf">【未確認】</span>、契約部門の所属、NSSの協力会社制度</td><td>DX推進部（技術・DX本部）は別の買い手として管理する</td></tr><tr><th scope="row"><span class="prio prio-p2">2</span></th><td><strong>阪神高速</strong></td><td><span class="lb lb-fact">【事実】</span>総務・法務部門でLAWGUEを導入済み、PROZITを全社展開中。<span class="lb lb-fact">【事実】</span>中計2026-2028で「担い手不足への対応」</td><td>経営企画部 情報システム室（<a href="https://www.isdecisions.jp/resources/casestudy/5042/" target="_blank" rel="noopener">UserLock事例</a>）<span class="lb lb-verify">【要一次確認】</span>、総務・法務、株式会社情報技術</td><td>LAWGUEの定着度と次の部門、情報技術との分担</td><td>業務系は技研→情報技術の内製ルート</td></tr><tr><th scope="row"><span class="prio prio-p3">3（限定）</span></th><td><strong>首都高</strong></td><td><span class="lb lb-fact">【事実】</span>生成AIの全社展開と定着策を公開。<span class="lb lb-hyp">【仮説】</span>中計2024-2026の最終年度で、次期中計を策定中</td><td>技術部DX推進室のみ</td><td>224人の次の課題（規程参照・ガバナンス）</td><td><span class="lb lb-policy">【方針】</span>契約・総務・監査には2026年度中は接触しない。H2は持参しない。Google Workspace系と推定<span class="lb lb-hyp">【仮説】</span>。OB・再就職者経由の紹介は使わない</td></tr><tr><th scope="row"><span class="prio prio-p4">4</span></th><td>NEXCO中日本</td><td><span class="lb lb-hyp">【仮説】</span>「業務改革推進部」に情報システム機能があれば窓口として好適</td><td>業務改革推進部（確度:低）<span class="lb lb-verify">【要一次確認】</span></td><td>組織の実在</td><td>90日以内は着手しない。i-MOVEMENTやETC障害の当事者性に触れない</td></tr><tr><th scope="row"><span class="prio prio-p4">5</span></th><td>NEXCO西日本</td><td><span class="lb lb-fact">【事実】</span>NEXCO西日本情報テクノロジーがグループのITインフラを担う（<a href="https://corp.w-nexco.co.jp/corporate/release/hq/r3/0630/" target="_blank" rel="noopener">2021/6/30</a>）</td><td>情報テクノロジー社</td><td>NSSとの分担<span class="lb lb-verify">【要一次確認】</span></td><td>協力会社のルートだけを使う</td></tr><tr><th scope="row"><span class="prio prio-p4">6</span></th><td>本四高速</td><td>規模が最も小さく、組織情報もない</td><td>未確認</td><td>―</td><td>当面は着手しない</td></tr></tbody></table></div><h3 id="s2-2">2-2. 初回面談の獲得ルート</h3><p>紹介のない新規ベンダーが初回面談を取るには、4〜8週かかると見込みます<span class="lb lb-general">〔一般知識・要確認〕</span>。ルートは並行して動かします。<span class="lb lb-policy">【方針】</span>OB・再就職者経由の紹介は、首都高では使いません。他社でも原則として使いません。</p><div class="table-wrap" tabindex="0"><table class="" style="min-width:820px"><thead><tr><th scope="col">ルート</th><th scope="col">NEXCO東日本</th><th scope="col">阪神高速</th><th scope="col">首都高（DX推進室）</th><th scope="col">確度・備考</th></tr></thead><tbody><tr><th scope="row">自社の既存取引（施設系チームの顧客関係、NSS・子会社・リース会社との取引）</th><td><span class="sym sym-best">◎</span> NSS経由での紹介を依頼</td><td><span class="sym sym-ok">○</span> 情報技術・技研</td><td><span class="sym sym-ok">○</span></td><td><span class="lb lb-hyp">【仮説】</span>まず社内で取引の有無を確認（2-5）</td></tr><tr><th scope="row">クラウドベンダーの担当営業（Google・Microsoft）</th><td><span class="sym sym-ok">○</span> 利用ツールが分かれば</td><td><span class="sym sym-ok">○</span></td><td><span class="sym sym-best">◎</span> Google（Gemini導入。<span class="lb lb-fact">【事実】</span>）</td><td>東日本・阪神の利用ツールは<span class="lb lb-unconf">【未確認】</span></td></tr><tr><th scope="row">SaaSベンダーとの共同営業</th><td><span class="sym sym-weak">△</span></td><td><span class="sym sym-best">◎</span> FRAIM（LAWGUEの提供元。<span class="lb lb-fact">【事実】</span>導入済み）</td><td><span class="sym sym-weak">△</span></td><td>中立性を保つ（5-4）</td></tr><tr><th scope="row">業界団体・行事（高速道路調査会、日本道路協会、ハイウェイテクノフェア）</th><td><span class="sym sym-ok">○</span></td><td><span class="sym sym-ok">○</span></td><td><span class="sym sym-ok">○</span></td><td><span class="lb lb-general">〔一般知識・要確認〕</span>日程と出展・聴講の条件。LOBの技術者が多い場なので、情シスとの接点は限られる</td></tr><tr><th scope="row">JUASの研究会・部会</th><td><span class="sym sym-ok">○</span></td><td><span class="sym sym-ok">○</span></td><td><span class="sym sym-ok">○</span></td><td><span class="lb lb-general">〔一般知識・要確認〕</span>会員かどうか</td></tr><tr><th scope="row">自社主催の小規模セミナー「インフラ企業の生成AI定着・ガバナンス」</th><td><span class="sym sym-best">◎</span></td><td><span class="sym sym-best">◎</span></td><td><span class="sym sym-ok">○</span></td><td><span class="lb lb-policy">【方針】</span>公開事例とJUAS・IPAのデータだけで構成。参加は無料（参加者への便益供与にならない範囲とする）</td></tr><tr><th scope="row">公開窓口への直接の問い合わせ</th><td><span class="sym sym-weak">△</span></td><td><span class="sym sym-weak">△</span></td><td><span class="sym sym-weak">△</span></td><td>最後の手段</td></tr></tbody></table></div><h3 id="s2-3">2-3. 会社内の攻略順</h3><p><span class="lb lb-policy">【方針】</span>最初の窓口は情シス（首都高ではDX推進室）とし、紹介を得て人事・法務・契約の業務部門へ進みます。経営企画には、部門での時間削減の実績を持って行きます。監査・内部監査には営業として接触しません。</p><h3 id="s2-4">2-4. ステークホルダーマップ</h3><p>関係の温度は、付録Cのアカウントプランで管理します。</p><div class="table-wrap" tabindex="0"><table class="" style="min-width:820px"><thead><tr><th scope="col">役割</th><th scope="col">想定される関心・KPI<span class="lb lb-hyp">【仮説】</span></th><th scope="col">聞くこと（初回）</th><th scope="col">私たちの価値メッセージ</th><th scope="col">注意</th></tr></thead><tbody><tr><th scope="row"><strong>情シス部長／情報システム室長</strong></th><td>全社基盤の安定、セキュリティ、SaaSの審査負荷、NSSとの役割分担、生成AIのリスク</td><td>生成AI・SaaSで今いちばん困っていること。SaaS審査の手続と期間</td><td>「基幹・運用はNSSのまま、管理部門の定着とガバナンスを上に載せる」</td><td>NSSを批判しない。<strong>更新時期・次年度予算の項目は聞かない</strong>（公表情報で確認する）</td></tr><tr><th scope="row"><strong>DX推進室長</strong></th><td>生成AIの利用率、DX人材の数、全社DXの成果</td><td>定着の次の課題</td><td>「定着の型を管理部門で横展開し、ガバナンスを整える」</td><td>技術・LOB寄り。LOB固有の案件は追わない</td></tr><tr><th scope="row"><strong>経営企画部長</strong></th><td>中計の人材・生産性KPI、DX認定、次期中計</td><td>中計KPIの測り方</td><td>「管理部門DXを中計KPIで測れる形にする」</td><td>部門の実績を持って行く。無償は論点メモまで。上流受託の前に後続入札の参加制限を確認（5-2）</td></tr><tr><th scope="row"><strong>契約・調達部門長</strong></th><td>工事契約の事務量、変更契約・検査の負荷、経験者の退職</td><td>時間がかかる工程、属人化</td><td>「事務時間とリードタイムを減らし、ノウハウを残す」</td><td>予定価格・入札中・公告予定の案件には一切触れない。首都高では2026年度中は接触しない</td></tr><tr><th scope="row"><strong>法務・総務部長</strong></th><td>契約審査のリードタイム、規程・通達の管理</td><td>審査件数と日数、規程の探し方</td><td>「審査ナレッジと規程を資産化する」</td><td>認可手続の書類は経営企画・事業部門の所管の可能性が高い<span class="lb lb-hyp">【仮説】</span>。法務には聞かない</td></tr><tr><th scope="row"><strong>人事部長</strong></th><td>担い手不足、交代勤務、エンゲージメント、人的資本開示</td><td>採用・定着・労務管理の困りごと</td><td>「人材データを開示と定着に活かす」</td><td>給与・勤怠の基幹はNSSの領域<span class="lb lb-hyp">【仮説】</span></td></tr><tr><th scope="row"><strong>経理・財務部長</strong></th><td>決算、予実管理、機構への貸付料・債務関連の会計</td><td>予実管理のやり方</td><td>「基幹会計の上で予実・BIを軽くする」</td><td>機構関連の会計は特殊。教えてもらう姿勢で</td></tr><tr><th scope="row"><strong>内部監査／監査室</strong></th><td>独立性、内部統制</td><td>―</td><td>―</td><td><span class="lb lb-policy">【方針】</span>営業ルートにしない。要件の出し手として扱い、接触は情シス経由に限る</td></tr><tr><th scope="row"><strong>NSS／情報技術／NEXCO西日本情報テクノロジー</strong></th><td>役割の維持、人手不足、新技術への対応</td><td>協力会社の登録制度、手薄な領域</td><td>「御社の協力会社として、AI・定着・SaaSの専門人材を供給する」</td><td>1年目は再委託を主とする（5-4）</td></tr><tr><th scope="row">（参考）LOB部門</th><td>―</td><td>―</td><td>C'(a)の利用者として</td><td>直接は攻略しない</td></tr></tbody></table></div><h3 id="s2-5">2-5. 社内の調整：自社の施設系アカウントチームとの分担<span class="lb lb-policy">【方針】</span></h3><div class="table-wrap" tabindex="0"><table class=""><thead><tr><th scope="col">項目</th><th scope="col">決めること</th></tr></thead><tbody><tr><th scope="row">アカウントの分担</th><td>施設系・営業系（工事・下請け）は既存の施設系チーム、情報系（管理部門・全社共通基盤）は本チームが担当する。同じ会社への訪問は事前に相互通知する</td></tr><tr><th scope="row">既存案件の棚卸し</th><td>自社がNSS・情報技術・電機メーカーの下請けとして入っている既存案件を確認する。メッセージの矛盾と、利益相反（同じ案件で発注側と受注側に立つこと）を防ぐ</td></tr><tr><th scope="row">顧客関係の利用</th><td>施設系チームの人脈から管理部門への紹介を受ける場合は、施設系の案件に影響しない範囲で依頼する</td></tr><tr><th scope="row">情報管理</th><td>施設系の工事で知りえた非公開情報を、情報系の提案に使わない</td></tr><tr><th scope="row">接触記録の共有</th><td>付録Cの接触記録を両チームで共有する</td></tr></tbody></table></div></section><section id="s3" class="sec"><h2><span class="plate" aria-hidden="true">3</span><span class="h2t">仮説カード</span></h2><p>各カードは、面談に1〜2枚選んで持参する前提で書いています。スコアは調査レポートv2の5軸評価（25点満点）です。検証する質問は、初回で聞くもの（◆）と2回目以降で聞くもの（◇）に分けています。</p><div class="hfilter" role="group" aria-label="仮説カードの絞り込み"><span class="hf-label">絞り込み</span><button type="button" class="fchip" data-f="all" aria-pressed="true">すべて</button><button type="button" class="fchip" data-f="co:NEXCO東日本" aria-pressed="false">NEXCO東日本</button><button type="button" class="fchip" data-f="co:阪神高速" aria-pressed="false">阪神高速</button><button type="button" class="fchip" data-f="co:首都高" aria-pressed="false">首都高</button><button type="button" class="fchip" data-f="co:NEXCO中日本" aria-pressed="false">NEXCO中日本</button><button type="button" class="fchip" data-f="co:NEXCO西日本" aria-pressed="false">NEXCO西日本</button><button type="button" class="fchip" data-f="rank:A" aria-pressed="false">A判定</button><button type="button" class="fchip" data-f="rank:B" aria-pressed="false">B判定</button><span class="hf-count" aria-live="polite"></span></div><p class="hf-note">会社での絞り込みは、0章「ひと目で分かる優先順位」の「持参する仮説カード」に基づきます。H7・H8は会社が指定されていないため「すべて」と判定でだけ表示されます。</p><div class="hcards"><article class="hcard hcard-a" id="h1" data-rank="A" data-co="NEXCO東日本|首都高"><header class="hc-head"><span class="hc-code">H1</span><span class="rank rank-a">A</span><h3 class="hc-title">全社生成AIの定着・AIガバナンス</h3><p class="hc-meta">W1、22点、A判定</p><div class="hc-cos"><span class="co-tag">NEXCO東日本</span><span class="co-tag">首都高</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>管理部門では生成AIが「導入済み・利用は一部」の状態にある。業務への組込み（規程の参照、文書作成）と、利用ルール・ログ管理が追いついていない<span class="lb lb-hyp">【仮説】</span>。<strong>首都高向けの変形</strong>：利用者224人まで来た「次」として、規程参照（RAG）とAIガバナンスが課題になっている<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>情シスまたはDX推進室<span class="lb lb-verify">【要一次確認】</span></dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-first">◆「生成AIはどのくらい使われていて、どんな声がありますか」</li><li class="q-first">◆「社内規程や文書を参照させたいという要望はありますか」</li><li class="q-second">◇「利用ルールやログの管理はどうされていますか」</li><li class="q-second">◇「この取り組みは通常どなたが判断されますか」</li></ul></dd></div><div class="kv kv-真のシグナル"><dt>真シグナル</dt><dd>利用率が頭打ち。部門ごとにユースケースがばらばら。規程類を参照させたいという声。利用ルールが暫定版のまま</dd></div><div class="kv kv-偽のシグナル"><dt>偽シグナル</dt><dd>RAG・ガバナンス・内製チームが整っている（首都高はこれに近い可能性がある）。または「生成AIは当面使わない」方針</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>O1「生成AI定着診断＋社内講師育成」（有償）。首都高にはO1の変形「AIガバナンスと規程参照の設計支援」</dd></div></dl><details class="more"><summary>根拠・拡張パス・競合・調達ルート・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>首都高：動画研修→対面研修23回で利用者が22人→224人（<a href="https://www.businessinsider.jp/article/2608-shutoko-google-gemini-dx-adoption/" target="_blank" rel="noopener">Business Insider</a>）。「1日30分以上の業務効率化」との報道（<a href="https://kn.itmedia.co.jp/kn/articles/2608/21/news044.html" target="_blank" rel="noopener">キーマンズネット</a>）。<span class="lb lb-fact">【事実】</span>売上高1兆円以上の企業の85.1%が生成AIを導入済み、AIエージェントを「検討中」が31.2%（<a href="https://prtimes.jp/main/html/rd/p/000000013.000160762.html" target="_blank" rel="noopener">JUAS速報</a>）。<span class="lb lb-unconf">【未確認】</span>NEXCO東日本・阪神の社内生成AIの状況</dd></div><div class="kv"><dt>拡張パス</dt><dd>部門別ユースケースの実装 → 規程・文書ナレッジ基盤（N6）→ AIガバナンス規程 → LOBへの開放（H6）</dd></div><div class="kv"><dt>競合</dt><dd>Google・Microsoftと代理店、NSS（NEXCOの基盤運用）、内製チーム（首都高）</dd></div><div class="kv"><dt>調達ルート</dt><dd>研修・定着支援は役務として直接。テナント上の基盤構築（RAGなど）は、NEXCOではNSS経由（再委託）とする（5-1の早見表）</dd></div><div class="kv"><dt>リスク</dt><dd>代理店の無償支援と比べられる。「管理部門の業務組込み」と「ガバナンス」に絞って差別化する</dd></div></dl></details></article><article class="hcard hcard-a" id="h2" data-rank="A" data-co="NEXCO東日本|阪神高速"><header class="hc-head"><span class="hc-code">H2</span><span class="rank rank-a">A</span><h3 class="hc-title">契約・調達DX：工事契約事務の生産性</h3><p class="hc-meta">W4＋N1、21点、A判定。45日判定つき</p><div class="hc-cos"><span class="co-tag">NEXCO東日本</span><span class="co-tag">阪神高速</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>更新事業の拡大で、工事の契約・変更契約・検査の事務量が増え、経験者の異動・退職で属人化している<span class="lb lb-hyp">【仮説】</span>。<strong>前提</strong>：契約部門が管理部門に属し、事務の改善に予算を持つ<span class="lb lb-verify">【要一次確認】</span>。成り立たなければ45日判定で降格する</dd></div><div class="kv kv-対象会社"><dt>対象会社</dt><dd>NEXCO東日本、阪神高速（PROZITの定着）。<strong>首都高は2026年度中は対象外</strong><span class="lb lb-policy">【方針】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>契約・調達部門<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-first">◆「契約事務で一番時間がかかる工程はどこですか（仕様書の確認、契約書作成、変更協議、検査書類）」</li><li class="q-first">◆「経験者の異動や退職で困ることはありますか」</li><li class="q-second">◇「本社と支社で、事務をどう分担されていますか」</li><li class="q-second">◇「事務の改善は、どの部門の判断・予算で行われますか」。※システムの更新時期や公告予定は聞かない</li></ul></dd></div><div class="kv kv-真のシグナル"><dt>真シグナル</dt><dd>変更契約・検査書類が紙・Excel中心。支社ごとに様式がばらばら。審査が属人化</dd></div><div class="kv kv-偽のシグナル"><dt>偽シグナル</dt><dd>契約事務がLOB（事務所・支社の工務担当）中心で、本社の契約部門に予算がない。調達ポータル・電子契約が整備済み</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>O2「契約事務の時間棚卸し＋文書チェックPoC」（<strong>有償。契約後、顧客環境で実施</strong>）</dd></div></dl><details class="more"><summary>根拠・拡張パス・競合・調達ルート・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>NEXCO東日本の入札公告検索は1,900件超、契約事務処理要領は令和8年3月26日に最終改正（<a href="https://www.e-nexco.co.jp/bids/public_notice/search_service" target="_blank" rel="noopener">検索</a>、<a href="https://www.e-nexco.co.jp/assets/pdf/bids/stipulation/const01.pdf" target="_blank" rel="noopener">要領</a>）。<span class="lb lb-fact">【事実】</span>阪神高速はPROZITを全社展開（<a href="https://www.hanshin-exp.co.jp/company/topics/files/20260414_pressrelease_1.pdf" target="_blank" rel="noopener">2026年度の主な取り組み</a>）。<span class="lb lb-fact">【事実】</span>2023年の法改正で更新事業の財源を確保（<a href="https://www.aba-j.or.jp/info/industry/19930/" target="_blank" rel="noopener">日本自動車会議所</a>）</dd></div><div class="kv"><dt>拡張パス</dt><dd>契約ワークフロー → 電子契約 → 契約管理（変更・検査・支払）→ グループ会社への展開</dd></div><div class="kv"><dt>競合</dt><dd>入札情報公開システムの運営者（日立システムズ：NEXCO中日本・本四。<span class="lb lb-fact">【事実】</span>）、電子入札システムの保守会社、グループIT会社、電子契約SaaS</dd></div><div class="kv"><dt>調達ルート</dt><dd>業務診断は役務として直接。システムが絡む部分はNSS・情報技術経由</dd></div><div class="kv"><dt>リスク</dt><dd>予定価格・入札中の案件に近づくとコンプライアンス上の問題になる。PoCは契約後に、顧客が選んだ書類を顧客環境で扱う。契約前のデモは公開資料（公告・入札説明書・公表済みの規程）だけを使う</dd></div></dl></details></article><article class="hcard hcard-a" id="h3" data-rank="A" data-co="NEXCO東日本"><header class="hc-head"><span class="hc-code">H3</span><span class="rank rank-a">A</span><h3 class="hc-title">DX/AI人材の伴走育成</h3><p class="hc-meta">W2、21点、A判定</p><div class="hc-cos"><span class="co-tag">NEXCO東日本</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>「研修は受けたが業務で使えない」が全社的な課題。推進役と社内講師が足りない<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>人事またはDX推進室<span class="lb lb-verify">【要一次確認】</span></dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-first">◆「研修の後、業務で使われているかをどう見ていますか」</li><li class="q-second">◇「社内講師は何人いますか、本務との兼務ですか」</li></ul></dd></div><div class="kv kv-真／偽のシグナル"><dt>真偽シグナル</dt><dd>真：受講率は高いが活用指標がない、講師が数名に集中している。偽：デジタルスキル標準に沿った育成体系と測定がすでにある</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>O1に組み込む（社内講師育成のパートとして）</dd></div></dl><details class="more"><summary>根拠・拡張パス・競合・調達ルート・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>首都高「9割が見ても使わない」→社員講師による対面研修に転換（<a href="https://www.businessinsider.jp/article/2608-shutoko-google-gemini-dx-adoption/" target="_blank" rel="noopener">Business Insider</a>）。<span class="lb lb-fact">【事実】</span>DX人材の不足85.5%、データマネジメント人材の不足71.9%（<a href="https://www.ipa.go.jp/digital/chousa/dx-trend/dx-trend-2026.html" target="_blank" rel="noopener">IPA DX動向2026</a>）。<span class="lb lb-fact">【事実】</span>NEXCO東日本の中計「人材育成により能力を高める」</dd></div><div class="kv"><dt>拡張パス</dt><dd>部門ごとの推進役 → 認定制度 → グループ会社への展開</dd></div><div class="kv"><dt>競合</dt><dd>研修会社、ベンダーの無償研修、内製講師</dd></div><div class="kv"><dt>調達ルート</dt><dd>役務（研修）として直接。NSSの本業とは衝突しない<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv"><dt>リスク</dt><dd>単価が小さい。H1・H4の入口として位置づける</dd></div></dl></details></article><article class="hcard hcard-a" id="h4" data-rank="A" data-co="阪神高速|NEXCO中日本"><header class="hc-head"><span class="hc-code">H4</span><span class="rank rank-a">A</span><h3 class="hc-title">管理部門のSaaS＋AI横展開</h3><p class="hc-meta">W6、20点、A判定。人事・労務N3、経理・経営管理N4、グループ共通化N5を含む</p><div class="hc-cos"><span class="co-tag">阪神高速</span><span class="co-tag">NEXCO中日本</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>NSS・情報技術が運用する基幹系の周辺業務（申請、人事データ、予実）が、Excel・紙・個別ツールで埋まっている<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>各管理部門＋情シス（SaaSの審査）</dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-first">◆「基幹システムの周りで、Excelや紙が残っている業務はどれですか」</li><li class="q-second">◇「最近入れたSaaSはありますか。どのくらいの期間で入りましたか」</li><li class="q-second">◇「人的資本の開示に使う指標は、どこから集めていますか」</li></ul></dd></div><div class="kv kv-真／偽のシグナル"><dt>真偽シグナル</dt><dd>真：部門ごとにSaaSを個別に検討している、予実管理がExcel。偽：SaaSが原則禁止、NSSが周辺も内製で賄っている</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>O1・O3の後に「管理部門SaaS適用の棚卸し」（有償）</dd></div></dl><details class="more"><summary>根拠・拡張パス・競合・調達ルート・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>阪神高速は総務・法務部門にSaaS（LAWGUE）を導入。<span class="lb lb-fact">【事実】</span>NSSは経理・人事給与などの基幹系を運用（<a href="https://corp.w-nexco.co.jp/corporate/group/nexco_sys/" target="_blank" rel="noopener">NEXCO西日本 グループ紹介</a>）。<span class="lb lb-fact">【事実】</span>NEXCO中日本の中計の方針⑤「エンゲージメント向上」（<a href="https://r2sj.net/news/21896" target="_blank" rel="noopener">R2SJ</a>）。<span class="lb lb-fact">【事実】</span>料金収受員の確保が困難（<a href="https://www.aba-j.or.jp/info/industry/26793/" target="_blank" rel="noopener">日本自動車会議所</a>）</dd></div><div class="kv"><dt>拡張パス</dt><dd>人事・労務 → 経理・経営管理 → グループ会社の管理部門の共通化</dd></div><div class="kv"><dt>競合</dt><dd>NSS・情報技術（基幹）、SaaSベンダーと代理店</dd></div><div class="kv"><dt>調達ルート</dt><dd>SaaSは直接またはリセラー経由。基幹との連携はNSS・情報技術経由</dd></div><div class="kv"><dt>リスク</dt><dd>NSSの領域にはみ出す。基幹に触れない線引きを提案書に明記する</dd></div></dl></details></article><article class="hcard hcard-b" id="h5" data-rank="B" data-co="阪神高速"><header class="hc-head"><span class="hc-code">H5</span><span class="rank rank-b">B</span><h3 class="hc-title">法務DX：契約レビュー・規程・通達</h3><p class="hc-meta">N2、19点、B判定</p><div class="hc-cos"><span class="co-tag">阪神高速</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>法務・総務は契約審査と規程・通達の管理に時間を取られ、審査ナレッジが属人化している<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>法務・総務部門</dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-first">◆「規程や通達の現行版を探すのに、どのくらい手間がかかっていますか」</li><li class="q-first">◆（阪神）「LAWGUEを入れて、次に困っていることは」</li><li class="q-second">◇「契約審査は年間どのくらいの件数ですか」</li></ul></dd></div><div class="kv kv-真／偽のシグナル"><dt>真偽シグナル</dt><dd>真：現行版の検索に時間がかかる、審査が少数の担当者に集中している。偽：法務SaaSと文書管理が整っている</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>O3「規程・通達ナレッジ化PoC」（<strong>有償。契約後、顧客環境で実施</strong>）</dd></div></dl><details class="more"><summary>根拠・拡張パス・競合・調達ルート・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>阪神高速はLAWGUEを導入し、契約書レビュー、過去の契約・条項の検索比較、審査ナレッジの蓄積を狙っている（<a href="https://prtimes.jp/main/html/rd/p/000000109.000037680.html" target="_blank" rel="noopener">PR TIMES</a>）。<span class="lb lb-unconf">【未確認】</span>他の5社の状況</dd></div><div class="kv"><dt>拡張パス</dt><dd>規程ナレッジ → 契約審査の支援 → 全社の文書・ナレッジ基盤（N6）</dd></div><div class="kv"><dt>競合</dt><dd>リーガルテックSaaS（阪神はFRAIM）、文書管理ベンダー</dd></div><div class="kv"><dt>調達ルート</dt><dd>役務（PoC）→ SaaS</dd></div><div class="kv"><dt>リスク</dt><dd>阪神では既存SaaSと重なる。阪神では「拡張・連携」として、FRAIMと組む形で提案する</dd></div></dl></details></article><article class="hcard hcard-b" id="h6" data-rank="B" data-co="NEXCO西日本"><header class="hc-head"><span class="hc-code">H6</span><span class="rank rank-b">B</span><h3 class="hc-title">LOBへ全社共通サービスを開放</h3><p class="hc-meta">N7、18点、B判定</p><div class="hc-cos"><span class="co-tag">NEXCO西日本</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>LOBも技術基準や過去の記録の検索に生成AIを使いたいが、自前で基盤を作る余力はない<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>情シス（提供者）、LOB（利用者）</dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-second">◇「事業部門から全社基盤を使いたいという要望はありますか」</li><li class="q-second">◇「全社共通サービスの費用はどう負担されていますか」</li></ul></dd></div><div class="kv kv-真／偽のシグナル"><dt>真偽シグナル</dt><dd>真：LOBが個別にツールを入れ始めて統制が効かない。偽：LOBがエンジ子会社経由で独自の基盤を持っている</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>H1の第4段階としてのみ扱う（単独では提案しない）</dd></div></dl><details class="more"><summary>根拠・調達ルート・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>首都高ではベテラン社員がNotebookを自作・共有している（<a href="https://www.itmedia.co.jp/aiplus/article/2608/05/2000000383/" target="_blank" rel="noopener">ITmedia AI+</a>）。<span class="lb lb-field">【現場知見】</span>LOBのシステムは縦割りで完結している</dd></div><div class="kv"><dt>調達ルート</dt><dd>情シスの物品・役務。NEXCOではNSS経由</dd></div><div class="kv"><dt>リスク</dt><dd>LOBの領域に踏み込んだと受け取られる。「共通の道具を提供するだけ」という線を守る</dd></div></dl></details></article><article class="hcard hcard-b" id="h7" data-rank="B" data-co=""><header class="hc-head"><span class="hc-code">H7</span><span class="rank rank-b">B</span><h3 class="hc-title">社内IT・グループのセキュリティbaselineと全社IT統制</h3><p class="hc-meta">W9＋W3'、18点・16点、B判定</p><div class="hc-cos"><span class="co-tag co-none">0章の持参リスト外</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>道路は重要インフラの対象外だが、統一基準の施行を機に、社内IT・グループ会社・クラウド利用のセキュリティを同等水準で点検したい需要がある<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>情シス。全社IT統制は経営企画・リスク管理。内部監査は要件の出し手であり、営業ルートにはしない</dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-second">◇「統一基準をどう扱うご方針ですか」</li><li class="q-second">◇「グループ会社のセキュリティ水準は、どなたが見ていますか」</li></ul></dd></div><div class="kv kv-真／偽のシグナル"><dt>真偽シグナル</dt><dd>真：グループの水準がばらばら、クラウド利用の基準が古い。偽：NSS・情報技術が規程の見直しを完了済み</dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd>O4「統一基準ギャップ簡易評価」。<strong>NEXCOではNSSの本業（セキュリティ規程）と衝突するため、NSSからの再委託に限る</strong>。阪神・首都高では直接（ただし首都高は優先外）</dd></div></dl><details class="more"><summary>根拠・競合・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>重要インフラ統一基準は2026年7月31日に決定され、2026年10月1日に施行（施行の確認は<span class="lb lb-verify">【要一次確認】</span>）（<a href="https://www.cyber.go.jp/pdf/policy/infra/jyuhurakijun_2026.pdf" target="_blank" rel="noopener">統一基準</a>）。<span class="lb lb-fact">【事実】</span>道路は重要インフラ・基幹インフラの対象外（<a href="https://www.nisc.go.jp/pdf/policy/infra/cip_policy_abst_2024.pdf" target="_blank" rel="noopener">NISC</a>）</dd></div><div class="kv"><dt>競合</dt><dd>NSS（セキュリティ規程の見直しを本業とする）、セキュリティベンダー（NRIセキュアの製品が導入済み）</dd></div><div class="kv"><dt>リスク</dt><dd>ETC障害を引き合いに出すと、当事者の部門の反発を招く。統一基準と一般的なベストプラクティスを根拠に話す</dd></div></dl></details></article><article class="hcard hcard-b" id="h8" data-rank="B" data-co=""><header class="hc-head"><span class="hc-code">H8</span><span class="rank rank-b">B</span><h3 class="hc-title">次期中計のDX KPIとDX認定</h3><p class="hc-meta">W7、19点、B判定</p><div class="hc-cos"><span class="co-tag co-none">0章の持参リスト外</span></div></header><dl class="hc-body"><div class="kv kv-仮説"><dt>仮説</dt><dd>中計のDXはLOBが主語で、管理部門の人材・生産性のKPIがまだ定量化されていない<span class="lb lb-hyp">【仮説】</span></dd></div><div class="kv kv-オーナー"><dt>オーナー</dt><dd>経営企画</dd></div><div class="kv kv-検証する質問"><dt>検証質問</dt><dd><ul class="qlist"><li class="q-second">◇「中計の生産性・人材の目標は、どのような指標で測る予定ですか」</li></ul></dd></div><div class="kv kv-入口オファー"><dt>入口オファー</dt><dd><strong>無償は論点メモまで</strong>。策定支援は有償の役務とし、受託する前に後続入札への参加制限を確認する（5-2）</dd></div></dl><details class="more"><summary>根拠・競合・リスク</summary><dl class="hc-body"><div class="kv"><dt>根拠</dt><dd><span class="lb lb-fact">【事実】</span>首都高の中計2024-2026は今年度が最終年度（<a href="https://www.shutoko.co.jp/company/press/2024/data/04/10_chukikeiei/" target="_blank" rel="noopener">中計プレス</a>）。<span class="lb lb-unconf">【未確認】</span>6社本体のDX認定（グループでは阪神高速技研が2024/11/1に取得。<span class="lb lb-fact">【事実】</span><a href="https://www.hanshin-tech.co.jp/news/2024/20241112001186.html" target="_blank" rel="noopener">阪神高速技研</a>）。<span class="lb lb-unconf">【未確認】</span>各社中計のDX投資額・IT系KPI</dd></div><div class="kv"><dt>競合</dt><dd>大手コンサル（公開事例はデロイトのNEXCO中日本・保全支援のみ）</dd></div><div class="kv"><dt>リスク</dt><dd>上流を受託すると、実行段階の入札に参加できなくなる可能性がある<span class="lb lb-general">〔一般知識・要確認〕</span>。上流と実行のどちらを取るかを先に決める</dd></div></dl></details></article></div></section><section id="s4" class="sec"><h2><span class="plate" aria-hidden="true">4</span><span class="h2t">ヒアリングガイド</span></h2><h3 id="s4-1">4-1. 必ず聞く5問（相手別×ステージ別。ここだけ覚えれば足ります）</h3><p><span class="lb lb-policy">【方針】</span>面談は60分（実質40分）で、聞くのは8問程度までとします。<strong>予算・資格・更新時期は初回では聞きません</strong>。資格区分は自分で調べます（付録B）。予備の質問は付録Aにあります。</p><div class="hg" id="hearing-tool"><div class="hg-tabs" role="tablist" aria-label="相手"><button type="button" role="tab" class="hg-tab" id="hg-0-tab" aria-controls="hg-0" aria-selected="true" tabindex="0">情シス部長</button><button type="button" role="tab" class="hg-tab" id="hg-1-tab" aria-controls="hg-1" aria-selected="false" tabindex="-1">DX推進室長<span class="hg-tab-note">（首都高）</span></button><button type="button" role="tab" class="hg-tab" id="hg-2-tab" aria-controls="hg-2" aria-selected="false" tabindex="-1">法務・総務部長</button><button type="button" role="tab" class="hg-tab" id="hg-3-tab" aria-controls="hg-3" aria-selected="false" tabindex="-1">契約・調達部門長<span class="hg-tab-note">（東日本・阪神のみ）</span></button><button type="button" role="tab" class="hg-tab" id="hg-4-tab" aria-controls="hg-4" aria-selected="false" tabindex="-1">人事部長</button><button type="button" role="tab" class="hg-tab" id="hg-5-tab" aria-controls="hg-5" aria-selected="false" tabindex="-1">NSS・情報技術</button></div><div class="hg-panel" role="tabpanel" id="hg-0" aria-labelledby="hg-0-tab"><p class="hg-persona">相手：<strong>情シス部長</strong></p><div class="hg-cols"><section class="hg-stage hg-stage-1"><header><h4>初回（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp1" data-copy="【情シス部長｜初回｜必ず聞く5問】
+①生成AI・SaaSで今いちばん困っていること
+②SaaS審査の手続と期間
+③NSS（情報技術）との役割分担（事実の確認のみ）
+④同じ悩みを持つ他部門の紹介
+⑤次回に何をお持ちすればよいか" data-target="hg-0-s1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-0-s1"><li><label class="qcheck"><input type="checkbox" id="hg-0-1-0" data-store="hg-0-1-0"><span class="qtext">①生成AI・SaaSで今いちばん困っていること</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-1-1" data-store="hg-0-1-1"><span class="qtext">②SaaS審査の手続と期間</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-1-2" data-store="hg-0-1-2"><span class="qtext">③NSS（情報技術）との役割分担（事実の確認のみ）</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-1-3" data-store="hg-0-1-3"><span class="qtext">④同じ悩みを持つ他部門の紹介</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-1-4" data-store="hg-0-1-4"><span class="qtext">⑤次回に何をお持ちすればよいか</span></label></li></ol></section><section class="hg-stage hg-stage-2"><header><h4>2回目（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp2" data-copy="【情シス部長｜2回目｜必ず聞く5問】
+①前回の課題の規模（人数・時間・件数）
+②関係する部門と意思決定の流れ
+③有償の小規模な取り組みの場合の一般的な発注手続
+④NSSと一緒に進める場合の進め方
+⑤情報管理の条件（顧客環境・データ）" data-target="hg-0-s2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-0-s2"><li><label class="qcheck"><input type="checkbox" id="hg-0-2-0" data-store="hg-0-2-0"><span class="qtext">①前回の課題の規模（人数・時間・件数）</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-2-1" data-store="hg-0-2-1"><span class="qtext">②関係する部門と意思決定の流れ</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-2-2" data-store="hg-0-2-2"><span class="qtext">③有償の小規模な取り組みの場合の一般的な発注手続</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-2-3" data-store="hg-0-2-3"><span class="qtext">④NSSと一緒に進める場合の進め方</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-0-2-4" data-store="hg-0-2-4"><span class="qtext">⑤情報管理の条件（顧客環境・データ）</span></label></li></ol></section></div></div><div class="hg-panel" role="tabpanel" id="hg-1" aria-labelledby="hg-1-tab" hidden><p class="hg-persona">相手：<strong>DX推進室長</strong>（首都高）</p><div class="hg-cols"><section class="hg-stage hg-stage-1"><header><h4>初回（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp3" data-copy="【DX推進室長（首都高）｜初回｜必ず聞く5問】
+①224人の次に目指している状態
+②規程や社内文書の参照についての声
+③AI利用ルールで悩んでいる点
+④管理部門での利用の広がり
+⑤次回に何をお持ちすればよいか" data-target="hg-1-s1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-1-s1"><li><label class="qcheck"><input type="checkbox" id="hg-1-1-0" data-store="hg-1-1-0"><span class="qtext">①224人の次に目指している状態</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-1-1" data-store="hg-1-1-1"><span class="qtext">②規程や社内文書の参照についての声</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-1-2" data-store="hg-1-1-2"><span class="qtext">③AI利用ルールで悩んでいる点</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-1-3" data-store="hg-1-1-3"><span class="qtext">④管理部門での利用の広がり</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-1-4" data-store="hg-1-1-4"><span class="qtext">⑤次回に何をお持ちすればよいか</span></label></li></ol></section><section class="hg-stage hg-stage-2"><header><h4>2回目（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp4" data-copy="【DX推進室長（首都高）｜2回目｜必ず聞く5問】
+①ガバナンス・規程参照の優先度
+②検討の体制
+③有償の小規模な取り組みの手続
+④情報管理の条件
+⑤社内で説明する際に必要な材料" data-target="hg-1-s2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-1-s2"><li><label class="qcheck"><input type="checkbox" id="hg-1-2-0" data-store="hg-1-2-0"><span class="qtext">①ガバナンス・規程参照の優先度</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-2-1" data-store="hg-1-2-1"><span class="qtext">②検討の体制</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-2-2" data-store="hg-1-2-2"><span class="qtext">③有償の小規模な取り組みの手続</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-2-3" data-store="hg-1-2-3"><span class="qtext">④情報管理の条件</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-1-2-4" data-store="hg-1-2-4"><span class="qtext">⑤社内で説明する際に必要な材料</span></label></li></ol></section></div></div><div class="hg-panel" role="tabpanel" id="hg-2" aria-labelledby="hg-2-tab" hidden><p class="hg-persona">相手：<strong>法務・総務部長</strong></p><div class="hg-cols"><section class="hg-stage hg-stage-1"><header><h4>初回（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp5" data-copy="【法務・総務部長｜初回｜必ず聞く5問】
+①規程・通達の探し方と手間
+②契約審査で時間がかかる点
+③（阪神）LAWGUEの次の課題
+④属人化している業務
+⑤次回に何をお持ちすればよいか" data-target="hg-2-s1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-2-s1"><li><label class="qcheck"><input type="checkbox" id="hg-2-1-0" data-store="hg-2-1-0"><span class="qtext">①規程・通達の探し方と手間</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-1-1" data-store="hg-2-1-1"><span class="qtext">②契約審査で時間がかかる点</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-1-2" data-store="hg-2-1-2"><span class="qtext">③（阪神）LAWGUEの次の課題</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-1-3" data-store="hg-2-1-3"><span class="qtext">④属人化している業務</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-1-4" data-store="hg-2-1-4"><span class="qtext">⑤次回に何をお持ちすればよいか</span></label></li></ol></section><section class="hg-stage hg-stage-2"><header><h4>2回目（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp6" data-copy="【法務・総務部長｜2回目｜必ず聞く5問】
+①件数・日数
+②改善の判断者
+③PoCの対象にできる文書の範囲（顧客環境で）
+④有償の小規模な取り組みの手続
+⑤成果の測り方" data-target="hg-2-s2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-2-s2"><li><label class="qcheck"><input type="checkbox" id="hg-2-2-0" data-store="hg-2-2-0"><span class="qtext">①件数・日数</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-2-1" data-store="hg-2-2-1"><span class="qtext">②改善の判断者</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-2-2" data-store="hg-2-2-2"><span class="qtext">③PoCの対象にできる文書の範囲（顧客環境で）</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-2-3" data-store="hg-2-2-3"><span class="qtext">④有償の小規模な取り組みの手続</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-2-2-4" data-store="hg-2-2-4"><span class="qtext">⑤成果の測り方</span></label></li></ol></section></div></div><div class="hg-panel" role="tabpanel" id="hg-3" aria-labelledby="hg-3-tab" hidden><p class="hg-persona">相手：<strong>契約・調達部門長</strong>（東日本・阪神のみ）</p><div class="hg-cols"><section class="hg-stage hg-stage-1"><header><h4>初回（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp7" data-copy="【契約・調達部門長（東日本・阪神のみ）｜初回｜必ず聞く5問】
+①時間がかかる工程
+②経験者の異動・退職の影響
+③本社と支社の分担
+④同じ悩みを持つ部門
+⑤次回に何をお持ちすればよいか" data-target="hg-3-s1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-3-s1"><li><label class="qcheck"><input type="checkbox" id="hg-3-1-0" data-store="hg-3-1-0"><span class="qtext">①時間がかかる工程</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-1-1" data-store="hg-3-1-1"><span class="qtext">②経験者の異動・退職の影響</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-1-2" data-store="hg-3-1-2"><span class="qtext">③本社と支社の分担</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-1-3" data-store="hg-3-1-3"><span class="qtext">④同じ悩みを持つ部門</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-1-4" data-store="hg-3-1-4"><span class="qtext">⑤次回に何をお持ちすればよいか</span></label></li></ol></section><section class="hg-stage hg-stage-2"><header><h4>2回目（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp8" data-copy="【契約・調達部門長（東日本・阪神のみ）｜2回目｜必ず聞く5問】
+①件数と工程ごとの時間
+②改善の判断者と予算の所管（成立条件(5)）
+③PoCの対象にできる書類の範囲
+④有償の小規模な取り組みの手続
+⑤情報管理の条件" data-target="hg-3-s2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-3-s2"><li><label class="qcheck"><input type="checkbox" id="hg-3-2-0" data-store="hg-3-2-0"><span class="qtext">①件数と工程ごとの時間</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-2-1" data-store="hg-3-2-1"><span class="qtext">②改善の判断者と予算の所管（成立条件(5)）</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-2-2" data-store="hg-3-2-2"><span class="qtext">③PoCの対象にできる書類の範囲</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-2-3" data-store="hg-3-2-3"><span class="qtext">④有償の小規模な取り組みの手続</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-3-2-4" data-store="hg-3-2-4"><span class="qtext">⑤情報管理の条件</span></label></li></ol></section></div></div><div class="hg-panel" role="tabpanel" id="hg-4" aria-labelledby="hg-4-tab" hidden><p class="hg-persona">相手：<strong>人事部長</strong></p><div class="hg-cols"><section class="hg-stage hg-stage-1"><header><h4>初回（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp9" data-copy="【人事部長｜初回｜必ず聞く5問】
+①担い手不足で困っていること
+②研修後の活用の見方
+③人材データの集め方
+④グループ会社の人事事務
+⑤次回に何をお持ちすればよいか" data-target="hg-4-s1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-4-s1"><li><label class="qcheck"><input type="checkbox" id="hg-4-1-0" data-store="hg-4-1-0"><span class="qtext">①担い手不足で困っていること</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-1-1" data-store="hg-4-1-1"><span class="qtext">②研修後の活用の見方</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-1-2" data-store="hg-4-1-2"><span class="qtext">③人材データの集め方</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-1-3" data-store="hg-4-1-3"><span class="qtext">④グループ会社の人事事務</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-1-4" data-store="hg-4-1-4"><span class="qtext">⑤次回に何をお持ちすればよいか</span></label></li></ol></section><section class="hg-stage hg-stage-2"><header><h4>2回目（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp10" data-copy="【人事部長｜2回目｜必ず聞く5問】
+①規模
+②判断者
+③SaaS利用の条件
+④手続
+⑤成果の測り方" data-target="hg-4-s2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-4-s2"><li><label class="qcheck"><input type="checkbox" id="hg-4-2-0" data-store="hg-4-2-0"><span class="qtext">①規模</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-2-1" data-store="hg-4-2-1"><span class="qtext">②判断者</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-2-2" data-store="hg-4-2-2"><span class="qtext">③SaaS利用の条件</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-2-3" data-store="hg-4-2-3"><span class="qtext">④手続</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-4-2-4" data-store="hg-4-2-4"><span class="qtext">⑤成果の測り方</span></label></li></ol></section></div></div><div class="hg-panel" role="tabpanel" id="hg-5" aria-labelledby="hg-5-tab" hidden><p class="hg-persona">相手：<strong>NSS・情報技術</strong></p><div class="hg-cols"><section class="hg-stage hg-stage-1"><header><h4>初回（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp11" data-copy="【NSS・情報技術｜初回｜必ず聞く5問】
+①御社が手薄な領域
+②協力会社の登録制度と条件
+③親会社からの最近の要望
+④外部と組んだ例
+⑤次回に何をお持ちすればよいか" data-target="hg-5-s1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-5-s1"><li><label class="qcheck"><input type="checkbox" id="hg-5-1-0" data-store="hg-5-1-0"><span class="qtext">①御社が手薄な領域</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-1-1" data-store="hg-5-1-1"><span class="qtext">②協力会社の登録制度と条件</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-1-2" data-store="hg-5-1-2"><span class="qtext">③親会社からの最近の要望</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-1-3" data-store="hg-5-1-3"><span class="qtext">④外部と組んだ例</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-1-4" data-store="hg-5-1-4"><span class="qtext">⑤次回に何をお持ちすればよいか</span></label></li></ol></section><section class="hg-stage hg-stage-2"><header><h4>2回目（必ず聞く5問）</h4><button type="button" class="copy-btn" id="cp12" data-copy="【NSS・情報技術｜2回目｜必ず聞く5問】
+①協力会社の登録手続
+②案件の進め方（再委託の型）
+③体制の条件
+④情報管理
+⑤最初の候補案件" data-target="hg-5-s2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">5問をコピー</span></button></header><ol class="hg-q" id="hg-5-s2"><li><label class="qcheck"><input type="checkbox" id="hg-5-2-0" data-store="hg-5-2-0"><span class="qtext">①協力会社の登録手続</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-2-1" data-store="hg-5-2-1"><span class="qtext">②案件の進め方（再委託の型）</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-2-2" data-store="hg-5-2-2"><span class="qtext">③体制の条件</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-2-3" data-store="hg-5-2-3"><span class="qtext">④情報管理</span></label></li><li><label class="qcheck"><input type="checkbox" id="hg-5-2-4" data-store="hg-5-2-4"><span class="qtext">⑤最初の候補案件</span></label></li></ol></section></div></div><div class="hg-foot"><button type="button" class="ghost-btn" id="hg-reset">この端末のチェックをすべて外す</button><span class="store-note">聞いた質問のチェックは、この端末のブラウザにだけ保存されます。</span></div></div><div class="post-meet"><p class="pm-title">面談の後に使う様式</p><div class="pm-btns"><button type="button" class="copy-btn" id="cp18" data-copy="C-3. 面談後の仮説更新
+■持参した仮説カード：H□
+■判定：当たり／一部当たり／外れ／判断保留
+■相手の言葉で聞けた課題（引用）：「　　」
+■定量情報（件数・時間・人数）：
+■真のシグナル／偽のシグナル：
+■判断者・手続（一般論として聞けた範囲）：
+■NSS・情報技術の関与：
+■紹介された次の部門・人物：
+■成立条件(1)〜(6)の更新：○／×／未確認
+■CRMステージの更新：S□→S□
+■次のアクション（担当・期限）：" data-target="tpl-c3"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">C-3 仮説更新をコピー</span></button><button type="button" class="copy-btn" id="cp19" data-copy="C-2. 接触記録（全件、24時間以内に記入）
+■日時／場所（先方会議室など）／方法（対面・オンライン）：
+■先方の出席者（部署・役職）：
+■当方の出席者（2名以上）：
+■紹介者・獲得ルート：
+■話題（要約）：
+■渡した資料／受け取った資料（公開か非公開か。非公開なら受け取らなかった旨）：
+■公告中の案件に関わる話題の有無（ありの場合は対応を記載）：
+■飲食・贈答の有無（「なし」を明記）：
+■次回の約束：" data-target="tpl-c2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">C-2 接触記録をコピー</span></button></div><p class="hint">様式の中身は<a href="#appC">付録C</a>にあります（コピー失敗時は付録Cの表が選択されるので、開いてからコピーしてください）。</p></div><h3 id="s4-2">4-2. 面談ステージごとの目的</h3><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">ステージ</th><th scope="col">目的</th><th scope="col">持参するもの</th><th scope="col">終了条件</th></tr></thead><tbody><tr><th scope="row"><strong>初回</strong></th><td>相手に価値を渡し（give-first）、課題を相手の言葉で聞き、次の部門の紹介を得る</td><td>give-first資料1枚、会社紹介1枚、仮説カード（口頭で使う）</td><td>課題を1つ以上、相手の言葉で聞けた。次回の約束か紹介を得た</td></tr><tr><th scope="row"><strong>2回目</strong></th><td>課題の定量化。意思決定の流れと、一般的な発注手続の確認</td><td>初回を踏まえた仮説の更新版、公開事例、入口オファーの素案</td><td>課題の規模が数字で分かった。判断者と手続が分かった</td></tr><tr><th scope="row"><strong>提案前</strong></th><td>調達方式と時期を、<strong>相手の規程に従って</strong>確認する。評価基準には関与しない。NSS・情報技術との分担を確定する</td><td>入口オファーの提案骨子、効果の前提、体制案</td><td>提案の受け取り手・時期・方式が分かった</td></tr></tbody></table></div><h3 id="s4-3">4-3. オープニング・トーク（give-first型）</h3><div class="talk"><div class="talk-bar"><span class="talk-label">オープニング・トーク（give-first型）</span><button type="button" class="copy-btn" id="cp13" data-copy="「本日はお時間をいただきありがとうございます。公開されている事例と、JUASやIPAの調査をもとに、インフラ企業で生成AIを業務に定着させるための要点を1枚にまとめてお持ちしました。私どもは交通管制やETCといった事業側のシステムではなく、本社の管理部門の業務と全社共通のIT基盤を専門にしています。この1枚の内容が御社に当てはまるかどうか、ご意見をいただけますと幸いです。」" data-target="talk-text"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">トークをコピー</span></button></div><blockquote class="talk-text" id="talk-text">「本日はお時間をいただきありがとうございます。公開されている事例と、JUASやIPAの調査をもとに、<strong>インフラ企業で生成AIを業務に定着させるための要点</strong>を1枚にまとめてお持ちしました。私どもは交通管制やETCといった事業側のシステムではなく、本社の管理部門の業務と全社共通のIT基盤を専門にしています。この1枚の内容が御社に当てはまるかどうか、ご意見をいただけますと幸いです。」</blockquote></div><p class="gf-lead">give-first資料の候補は3つです。いずれも公開情報だけで作ります。</p><div class="gf-grid"><div class="gf"><span class="gf-tag">give-first</span><p>「インフラ企業の生成AI定着の型」：首都高の公開事例（定着策の転換）、JUAS・IPAのデータ。首都高との面談では、首都高の事例を使いません。</p></div><div class="gf"><span class="gf-tag">give-first</span><p>「重要インフラ統一基準の要点1枚」：道路は対象外であることを明記し、社内IT・グループでの使い方を整理したもの。</p></div><div class="gf"><span class="gf-tag">give-first</span><p>「規程・契約ナレッジ活用の論点メモ」：阪神高速向け。</p></div></div><h3 id="s4-4" class="h3-warn">4-4. 聞いてはいけないこと・言ってはいけないこと（行動規範とあわせて全員で共有）</h3><div class="table-wrap" tabindex="0"><table class="ng-table" style="min-width:680px"><thead><tr><th scope="col">区分</th><th scope="col">NG</th><th scope="col">理由</th><th scope="col">代わりにどうするか</th></tr></thead><tbody><tr><th scope="row">不祥事</th><td>首都高の官製談合を話題のきっかけ・例・選定理由にする</td><td>措置への対応中で、当事者の部門がある</td><td>相手が話題にした場合だけ聞く。首都高の契約・総務・監査には2026年度中は接触しない</td></tr><tr><th scope="row">障害</th><td>ETC障害を「弱点」として話す</td><td>営業系の内部案件で、情報系の担当外</td><td>統一基準と一般的なベストプラクティスで話す</td></tr><tr><th scope="row">入札の公正性</th><td>予定価格、入札中・公告予定の案件、他社の情報、<strong>システムの更新時期、次年度予算の項目</strong>を尋ねる</td><td>公告前の情報の取得、仕様誘導の疑いを招く</td><td>公表済みの公告・発注見通し・落札結果だけを使う<span class="lb lb-general">〔発注見通しの公表の有無は要確認〕</span></td></tr><tr><th scope="row">仕様誘導</th><td>評価基準や仕様の「すり合わせ」、仕様書案の提供</td><td>公正な競争を損なう</td><td>調達方式と時期を相手の規程に従って確認するだけにする</td></tr><tr><th scope="row">公告中の接触</th><td>公告中の案件について、発注担当者と個別に接触する</td><td>各社の接触ルールに反する可能性<span class="lb lb-general">〔一般知識・要確認〕</span></td><td>質問書など正規の手続だけを使う</td></tr><tr><th scope="row">贈答・接待</th><td>会食・贈答・無償の作業</td><td>高速道路株式会社法には役職員の収賄罪の規定がある<span class="lb lb-general">〔一般知識・要確認：条文〕</span>。刑事罰の対象になりうる</td><td>一切しない（7-1の行動規範）</td></tr><tr><th scope="row">グループ会社</th><td>NSS・情報技術を批判する、置き換えを示唆する</td><td>ゲートキーパー</td><td>「協力会社として補完する」と話す</td></tr><tr><th scope="row">LOB</th><td>交通管制・ETC・保全データ基盤の提案</td><td>縦割りの警戒を招く<span class="lb lb-field">【現場知見】</span></td><td>共通基盤の「利用者」としてLOBに触れるだけにする</td></tr><tr><th scope="row">随意契約</th><td>「随契で発注できます」と言う</td><td>発注方式は相手の規程が決める</td><td>相手の手続を聞く</td></tr><tr><th scope="row">非公開資料</th><td>契約前に社内規程・契約書の提供を求める</td><td>情報管理上の問題</td><td>契約前のデモは公開資料だけ。実データは有償契約後に顧客環境で扱う</td></tr><tr><th scope="row">OB人脈</th><td>首都高のOB・再就職者経由の紹介</td><td>措置への対応中の首都高で、不適切な接触と受け取られる</td><td>使わない（他社でも原則使わない）</td></tr></tbody></table></div></section><section id="s5" class="sec"><h2><span class="plate" aria-hidden="true">5</span><span class="h2t">提案設計</span></h2><h3 id="s5-1">5-1. 入口オファーと調達ルートの早見表</h3><p class="lead-p"><strong>原則<span class="lb lb-policy">【方針】</span></strong>：PoCはすべて有償とし、契約後に顧客環境（テナントまたは閉域）で、顧客が選んだデータを使って実施します。契約前のデモは公開資料（公告、入札説明書、公表済みの規程）だけで行います。無償で出すのは論点メモまでです。</p><div class="table-wrap" tabindex="0"><table class="" style="min-width:1040px"><thead><tr><th scope="col">#</th><th scope="col">オファー</th><th scope="col">対象・期間</th><th scope="col">成果物</th><th scope="col">想定価格帯<span class="lb lb-hyp">【仮説】</span></th><th scope="col">NSSとの衝突チェック</th><th scope="col">現実的な調達ルート</th></tr></thead><tbody><tr><th scope="row"><strong>O1</strong></th><td>生成AI定着診断＋社内講師育成</td><td>管理部門2〜3部署、8〜10週</td><td>部門別ユースケース、業務組込みの試行、社内講師の育成、利用ルールの改善案</td><td>数百万円台</td><td>研修・定着支援は衝突しない<span class="lb lb-hyp">【仮説】</span>。基盤の構築・設定はNSSの領域</td><td>少額随契または見積合わせ（役務・研修区分）。基盤部分はNSSへの再委託</td></tr><tr><th scope="row"><strong>O2</strong></th><td>契約事務の時間棚卸し＋文書チェックPoC</td><td>契約部門（本社＋支社1つ）、6〜8週</td><td>工程別の事務時間マップ、ボトルネック分析、顧客環境での文書チェックPoC</td><td>数百万円台</td><td>業務診断は衝突しない<span class="lb lb-hyp">【仮説】</span>。システム化はNSS・情報技術経由</td><td>少額随契または見積合わせ（調査・コンサル区分）。成立条件(5)の検証が前提</td></tr><tr><th scope="row"><strong>O3</strong></th><td>規程・通達ナレッジ化PoC</td><td>法務・総務、6週</td><td>顧客環境での規程検索PoC、現行版管理の改善案</td><td>数百万円台</td><td>阪神では情報技術と分担を確認</td><td>少額随契または見積合わせ。阪神ではFRAIMとの連携、またはリセラー経由</td></tr><tr><th scope="row"><strong>O4</strong></th><td>統一基準ギャップ簡易評価（社内IT・グループ）</td><td>情シス、4〜6週</td><td>ギャップ表、優先対策</td><td>数百万円台</td><td><strong>NEXCOでは衝突する</strong>（NSSの本業）</td><td>NEXCO：NSSへの再委託のみ。阪神：直接（情報技術と確認）</td></tr><tr><th scope="row">O5</th><td>IT維持コスト棚卸し</td><td>情シス、4週</td><td>費用分析と更新計画</td><td>少額</td><td><strong>NEXCOでは衝突する</strong>（NSSの中長期IT企画）</td><td>NEXCOでは提案しない。阪神・首都高のみ</td></tr></tbody></table></div><p class="lead-p"><strong>調達方式の目安</strong>：WTO政府調達協定の基準額未満の案件は、各社サイトでの競争（見積合わせ・企画競争）か、各社の規程による少額随意契約になると考えられます。<strong>基準額、少額随契の上限、企画競争の要件は、すべて要一次確認</strong>です。</p><h3 id="s5-2">5-2. 入口から大型プログラムへ、ただし上流の受託前に確認すること</h3><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">段階</th><th scope="col">内容</th><th scope="col">期間の目安<span class="lb lb-hyp">【仮説】</span></th><th scope="col">規模感<span class="lb lb-hyp">【仮説】</span></th></tr></thead><tbody><tr><th scope="row">1. 入口</th><td>O1〜O3（1部門・小口、有償）</td><td>2〜3か月</td><td>数百万円</td></tr><tr><th scope="row">2. 部門展開</th><td>複数部署への展開、SaaSの導入</td><td>6〜12か月</td><td>数千万円</td></tr><tr><th scope="row">3. 全社プログラム</th><td>管理部門DXプログラム（生成AI・ナレッジ・契約・人事・経理）</td><td>1〜3年</td><td>年間で億円規模</td></tr><tr><th scope="row">4. 開放・グループ展開</th><td>共通基盤をLOB・グループ会社に開放（C'(a)）</td><td>2年目以降</td><td>―</td></tr></tbody></table></div><p class="lead-p"><strong>上流受託の前のチェック<span class="lb lb-policy">【方針】</span></strong>：診断・構想・中計KPI・要件整理などの上流を受託する前に、その成果物が後の調達の仕様になる場合に、受託者が後続の入札に参加できなくなる規定があるかを、相手の契約規程で確認します<span class="lb lb-general">〔一般知識・要確認〕</span>。参加制限がある場合は、上流を取るか実行を取るかを、案件ごとにアカウントプラン上で決めます。</p><p>6社合計の情報系IT支出の推計は年約55億〜215億円で、そのうち外部が新規に取れる部分は年数十億円規模と見ています（確度:低）<span class="lb lb-hyp">【仮説】</span>。</p><h3 id="s5-3">5-3. 価値ロジック（効果の言い方）</h3><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">経営課題</th><th scope="col">価値の言い方</th><th scope="col">測る指標</th><th scope="col">使える公開アンカー</th></tr></thead><tbody><tr><th scope="row"><strong>担い手不足（主）</strong></th><td>「経験者が減っても、増える事務を同じ品質で回せるようにする」</td><td>処理リードタイム、属人化業務の数、引継ぎ期間</td><td><span class="lb lb-fact">【事実】</span>阪神高速の中計「担い手不足への対応」、NEXCO中日本の中計の人手不足</td></tr><tr><th scope="row">生産性・人材育成（中計KPI）</th><td>「中計の生産性・人材目標を、管理部門で測れる形にする」</td><td>削減時間（時間/人・日）、活用者数、社内講師の数</td><td><span class="lb lb-fact">【事実】</span>首都高「1日30分以上の業務効率化」（<a href="https://kn.itmedia.co.jp/kn/articles/2608/21/news044.html" target="_blank" rel="noopener">キーマンズネット</a>）、NEXCO中日本のコールセンターでAIにより月146時間削減（<a href="https://www.nttbizsol.jp/case/c-nexco/" target="_blank" rel="noopener">NTTビジネスソリューションズ</a>）、NEXCO東日本の中計</td></tr><tr><th scope="row">ガバナンス</th><td>「業務とITのプロセスを、説明できる形にする」</td><td>規程の適用率、記録の網羅率</td><td>統一基準（一般論として）</td></tr><tr><th scope="row">（背景）管理費</th><td>効果の主語にはしない</td><td>―</td><td><span class="lb lb-hyp">【仮説】</span>1-2の背景を参照</td></tr></tbody></table></div><p>試算は、相手から聞いた数字で一緒に作ります。非公開データは使いません。</p><h3 id="s5-4">5-4. パートナー戦略：初年度はNSSの協力会社ルートを主にする</h3><div class="table-wrap" tabindex="0"><table class="" style="min-width:820px"><thead><tr><th scope="col">相手</th><th scope="col">1年目の主なルート</th><th scope="col">私たちの提供価値</th><th scope="col">衝突させない範囲</th><th scope="col">確認事項</th></tr></thead><tbody><tr><th scope="row"><strong>NSS（NEXCO3社）</strong></th><td><strong>協力会社に登録し、再委託を受ける（主ルート）</strong></td><td>生成AIの定着、SaaS適用、業務診断の専門人材</td><td>基幹・情報系・NWの運用、IT統制、セキュリティ規程、中長期IT企画（<span class="lb lb-fact">【事実】</span><a href="https://www.r-agent.com/company/a0748/" target="_blank" rel="noopener">リクルートエージェント</a>、<a href="https://corp.w-nexco.co.jp/corporate/group/nexco_sys/" target="_blank" rel="noopener">NEXCO西日本 グループ紹介</a>）</td><td>協力会社の登録制度<span class="lb lb-verify">【要一次確認】</span>。NEXCO西日本をどこまで担当しているか（2021年以降は情報テクノロジー社がグループのITインフラを担当）<span class="lb lb-verify">【要一次確認】</span></td></tr><tr><th scope="row">株式会社情報技術・阪神高速技研</th><td>構築は情報技術、上流・定着は私たち、という分担</td><td>SaaS＋AIの企画、定着</td><td>業務系システムの開発・保守（<a href="https://www.green-japan.com/company/11189" target="_blank" rel="noopener">Green</a>）</td><td>外部との協業方針</td></tr><tr><th scope="row">NEXCO西日本情報テクノロジー</th><td>協力会社</td><td>専門人材の供給</td><td>グループのITインフラ</td><td>人員・外注の構成<span class="lb lb-verify">【要一次確認】</span></td></tr><tr><th scope="row">SaaSベンダー（生成AI、リーガルテック、電子契約、タレントマネジメント、BI）</th><td>共同営業、リセラー</td><td>高速道路会社向けの業務設計と定着</td><td>―</td><td>特定製品の代理店に見えないよう中立性を保つ</td></tr><tr><th scope="row">リース会社</th><td>情報交換</td><td>―</td><td>価格競争に入らない</td><td><span class="lb lb-fact">【事実】</span>首都高のPC一式賃貸借は東京センチュリーが約3.76億円で落札（<a href="https://www.cas.go.jp/jp/seisaku/chotatsu/04tyoutasu/rakusatsu/4_computer/pdf/420.pdf" target="_blank" rel="noopener">内閣官房420</a>）</td></tr></tbody></table></div><p><span class="lb lb-policy">【方針】</span>直接の提案は、研修（O1）、業務診断（O2・O3）、SaaSに限ります。NEXCOでテナント基盤・システムが絡む部分は、NSSを通します。</p></section><section id="s6" class="sec"><h2><span class="plate" aria-hidden="true">6</span><span class="h2t">アクションプラン</span></h2><h3 id="s6-1">6-1. 90日計画（2026年10月5日〜2027年1月8日）</h3><figure class="gantt-fig"><p class="scroll-hint">図は横にスクロールできます →</p><div class="svg-wrap" tabindex="0"><svg class="gantt" viewBox="0 0 920 328" role="img" aria-label="90日計画のタイムライン（2026年10月5日〜2027年1月8日）。今日は2026年10月3日。45日判定は11月18日頃、提案の締め切りは12月18日、90日判定は1月8日。"><line class="g-month" x1="170.0" y1="40" x2="170.0" y2="258"/><text class="g-mlabel" x="174.0" y="34">2026年10月</text><line class="g-month" x1="389.7" y1="40" x2="389.7" y2="258"/><text class="g-mlabel" x="393.7" y="34">11月</text><line class="g-month" x1="602.3" y1="40" x2="602.3" y2="258"/><text class="g-mlabel" x="606.3" y="34">12月</text><line class="g-month" x1="822.0" y1="40" x2="822.0" y2="258"/><text class="g-mlabel" x="826.0" y="34">2027年1月</text><text class="g-wk" x="12" y="69">第1週</text><text class="g-ph" x="12" y="83">資格と社内</text><rect class="g-bar" x="198.3" y="62" width="35.4" height="18" rx="4"/><text class="g-dates" x="239.8" y="75">10/5〜10/9</text><text class="g-wk" x="12" y="103">第1〜2週</text><text class="g-ph" x="12" y="117">準備</text><rect class="g-bar" x="198.3" y="96" width="85.0" height="18" rx="4"/><text class="g-dates" x="289.4" y="109">10/5〜10/16</text><text class="g-wk" x="12" y="137">第3〜6週</text><text class="g-ph" x="12" y="151">面談依頼と初回</text><rect class="g-bar" x="297.6" y="130" width="184.3" height="18" rx="4"/><text class="g-dates" x="487.8" y="143">10/19〜11/13</text><text class="g-wk" x="12" y="171">第7〜10週</text><text class="g-ph" x="12" y="185">2回目と定量化</text><rect class="g-bar" x="496.0" y="164" width="184.3" height="18" rx="4"/><text class="g-dates" x="686.3" y="177">11/16〜12/11</text><text class="g-wk" x="12" y="205">第11〜11.5週</text><text class="g-ph" x="12" y="219">提案</text><rect class="g-bar g-bar-key" x="694.5" y="198" width="35.4" height="18" rx="4"/><text class="g-dates" x="735.9" y="211">12/14〜12/18</text><text class="g-wk" x="12" y="239">第13〜14週</text><text class="g-ph" x="12" y="253">判定</text><rect class="g-bar" x="850.4" y="232" width="28.3" height="18" rx="4"/><text class="g-dates" x="844.4" y="245" text-anchor="end">1/5〜1/8</text><line class="g-today" x1="184.2" y1="44" x2="184.2" y2="266"/><text class="g-today-t" x="184.2" y="284" text-anchor="start">今日 10/3</text><line class="g-m45" x1="510.2" y1="44" x2="510.2" y2="266"/><text class="g-m45-t" x="510.2" y="284" text-anchor="middle">45日判定 11/18頃</text><line class="g-dead" x1="722.8" y1="44" x2="722.8" y2="266"/><text class="g-dead-t" x="722.8" y="284" text-anchor="middle">提案締切 12/18</text><line class="g-m90" x1="871.7" y1="44" x2="871.7" y2="266"/><text class="g-m90-t" x="871.7" y="302" text-anchor="end">90日判定 1/8</text></svg></div><figcaption class="caption">6-1の表をタイムラインにしたものです。棒は各フェーズの期間、縦線は今日（2026-10-03）、45日判定、提案締切（12/18）、90日判定です。</figcaption></figure><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">期間</th><th scope="col">フェーズ</th><th scope="col">やること</th><th scope="col">完了の目安</th></tr></thead><tbody><tr><th scope="row"><strong>第1週</strong>（10/5〜10/9）</th><td>資格と社内</td><td>NEXCO東日本・阪神・首都高の物品・役務の資格を確認し、申請（付録B）。施設系チームとの分担を合意（2-5）。NSSの協力会社制度を問い合わせる</td><td>申請3社、社内の分担合意</td></tr><tr><th scope="row">第1〜2週（〜10/16）</th><td>準備</td><td>デスクリサーチ★★★（7-2。<strong>各社の予算の締め切り</strong>を含む）。アカウントプランを作成（東日本・阪神）。give-first資料3種を作成。獲得ルートの洗い出し</td><td>アカウントプラン2社分、資料3種</td></tr><tr><th scope="row">第3〜6週（10/19〜11/13）</th><td>面談依頼と初回</td><td>獲得ルート（2-2）から面談を依頼。<strong>初回面談を2〜4件実施</strong>（東日本の情シス、阪神の情シスまたは法務、首都高DX推進室）。NSS・情報技術と初回面談</td><td>依頼6件以上、実施2〜4件</td></tr><tr><th scope="row">第7〜10週（11/16〜12/11）</th><td>2回目と定量化</td><td>追加の初回面談と2回目の面談。課題の定量化、判断者と手続の確認。<strong>45日判定（11/18頃、会社ごと）</strong>。NSSの協力会社登録の手続</td><td>2回目2件以上、45日判定の記録</td></tr><tr><th scope="row">第11〜11.5週（12/14〜12/18）</th><td>提案</td><td><strong>12月18日までに有償の入口提案を1〜2件</strong>提出（年末年始の前）</td><td>提案1〜2件</td></tr><tr><th scope="row">第13〜14週（1/5〜1/8）</th><td>判定</td><td>提案のフォロー。<strong>90日判定（会社ごと）</strong>。2027年度途中の少額役務、2028年度予算への織り込みの計画</td><td>判定記録、次の90日計画</td></tr></tbody></table></div><p class="lead-p"><strong>プリセールスの工数予算<span class="lb lb-hyp">【仮説・目安】</span></strong>：アカウントリード1名（50%）、生成AI・業務の専門家2名（各20%）、パートナー担当1名（10%）。週次のパイプラインレビューで実績と照らします。</p><h3 id="s6-2">6-2. 年間の予算・イベント カレンダー</h3><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">時期</th><th scope="col">イベント</th><th scope="col">確度</th><th scope="col">営業上の意味</th></tr></thead><tbody><tr><th scope="row">2026/10/1（済）</th><td>重要インフラ統一基準、サイバー対処能力強化法の施行</td><td><span class="lb lb-fact">【事実】</span>（施行の確認は要一次確認）</td><td>H7・give-first資料</td></tr><tr><th scope="row">2026年10〜11月</th><td>2027年度予算の部門内の取りまとめ（推定）</td><td><span class="lb lb-general">〔一般知識・要確認〕</span></td><td>2027年度予算への新規の織り込みには、ほぼ間に合わない前提</td></tr><tr><th scope="row">2026年度末〜2027年初</th><td>事業計画の国交大臣認可などの手続（推定）</td><td><span class="lb lb-general">〔一般知識・要確認〕</span></td><td>予算確定の時期の確認</td></tr><tr><th scope="row">2026/12/18</th><td>本書での提案の締め切り</td><td><span class="lb lb-policy">【方針】</span></td><td>年末年始の前</td></tr><tr><th scope="row">2027年1〜3月</th><td>年度末。今年度予算の執行</td><td><span class="lb lb-hyp">【仮説】</span></td><td>少額役務の年度内発注の可能性（年度途中予算の有無は要確認）</td></tr><tr><th scope="row">2027年4月</th><td>新年度。NEXCO3社・阪神は中計2年目、首都高は次期中計の初年度（推定）</td><td><span class="lb lb-fact">【事実】</span><span class="lb lb-hyp">【仮説】</span></td><td>年度途中の少額役務の開始。段階2への展開</td></tr><tr><th scope="row">2027年夏〜秋</th><td>2028年度予算の取りまとめ（推定）</td><td><span class="lb lb-general">〔一般知識・要確認〕</span></td><td>段階2〜3を予算に織り込む本命の時期</td></tr><tr><th scope="row">2025〜2026年度（推定）</th><td>首都高PCリースの更新（2020年11月公告の次期。調査レポートv2の推定と同じ）</td><td><span class="lb lb-hyp">【仮説】</span><span class="lb lb-verify">【要一次確認】</span></td><td>公告で確認する（面談では聞かない）</td></tr><tr><th scope="row">時期は要確認</th><td>各社の物品・役務の競争参加資格の定期審査</td><td><span class="lb lb-verify">【要一次確認】</span></td><td>付録B</td></tr><tr><th scope="row">2027年末</th><td>SAP ECCの標準保守終了（高速道路会社での利用は未確認）</td><td><span class="lb lb-fact">【事実】</span>（利用は要確認）</td><td>NSSとの協業の論点</td></tr></tbody></table></div><h3 id="s6-3">6-3. Go/No-go基準（会社ごとに判定）</h3><div class="table-wrap" tabindex="0"><table class="decision" style="min-width:680px"><thead><tr><th scope="col">会社</th><th scope="col">45日判定（11/18頃）</th><th scope="col">90日判定（1/8）</th><th scope="col">No-go（その会社で撤退・保留）</th></tr></thead><tbody><tr><th scope="row"><strong>NEXCO東日本</strong></th><td>情シスとの初回面談を実施し、課題を1つ以上確認。NSSの協力会社制度の有無が判明。<strong>契約部門の所属と予算の所管（成立条件(5)）を確認し、×ならH2を降格</strong></td><td>有償提案1件（直接またはNSS経由）。または協力会社の登録が完了</td><td>管理部門に発注権限がなく、NSS経由のルートもない</td></tr><tr><th scope="row"><strong>阪神高速</strong></th><td>情シスか法務との初回面談を実施。LAWGUEの次の課題を確認</td><td>有償提案1件（O3）</td><td>SaaSの新規導入が凍結。情報技術が全面的に内製する方針</td></tr><tr><th scope="row"><strong>首都高（DX推進室）</strong></th><td>初回面談を実施し、224人の次の課題を確認</td><td>論点メモの提出と、有償の小規模な取り組みの可否を確認</td><td>内製で完結する方針が明確</td></tr><tr><th scope="row">全体</th><td>―</td><td>2社以上で成立条件の4つ以上が○</td><td>資格の等級や審査時期の制約で、2027年度中に受注できない会社は保留</td></tr></tbody></table></div><h3 id="s6-4">6-4. パイプラインKPIとCRMステージ</h3><ol class="stages"><li class="stage"><span class="st-code">S0</span><span class="st-def">ターゲット特定（アカウントプランあり）</span></li><li class="stage"><span class="st-code">S1</span><span class="st-def">面談依頼済み（ルートを記録）</span></li><li class="stage"><span class="st-code">S2</span><span class="st-def">初回面談実施</span></li><li class="stage"><span class="st-code">S3</span><span class="st-def">課題確認（相手の言葉で聞け、定量情報が1つ以上ある）</span></li><li class="stage"><span class="st-code">S4</span><span class="st-def">判断者・手続・予算の所管を確認</span></li><li class="stage"><span class="st-code">S5</span><span class="st-def">有償提案を提出（金額あり）</span></li><li class="stage stage-key"><span class="st-code">S6</span><span class="st-def"><strong>受注見込み＝見積依頼または口頭内示</strong></span></li><li class="stage"><span class="st-code">S7</span><span class="st-def">受注</span></li></ol><div class="table-wrap" tabindex="0"><table class=""><thead><tr><th scope="col">KPI</th><th scope="col">90日の目標<span class="lb lb-hyp">【仮説】</span></th></tr></thead><tbody><tr><th scope="row">資格の申請・確認</th><td>3社</td></tr><tr><th scope="row">紹介の獲得数</th><td>4件以上</td></tr><tr><th scope="row">面談依頼（S1）</th><td>6件以上</td></tr><tr><th scope="row">初回面談（S2）</th><td>2〜4件</td></tr><tr><th scope="row">S2→S3の転換率</th><td>50%以上</td></tr><tr><th scope="row">2回目面談への転換（S2→2回目）</th><td>50%以上</td></tr><tr><th scope="row">提案（S5）と提案金額の合計</th><td>1〜2件、合計で数百万〜1千万円台</td></tr><tr><th scope="row">S6到達</th><td>0〜1件（90日では到達しなくても可）</td></tr><tr><th scope="row">協力会社登録（NSS・情報技術）の手続開始</th><td>1社以上</td></tr></tbody></table></div></section><section id="s7" class="sec"><h2><span class="plate" aria-hidden="true">7</span><span class="h2t">リスク・行動規範・事前チェック</span></h2><h3 id="s7-1">7-1. リスクと対策</h3><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">リスク</th><th scope="col">重大度</th><th scope="col">起こりやすさ<span class="lb lb-hyp">【仮説】</span></th><th scope="col">対策</th></tr></thead><tbody><tr><th scope="row"><strong>贈収賄・不適切な接触（刑事罰の対象になりうる）</strong></th><td><span class="sev sev-max">最大</span></td><td>低（規範を守れば）</td><td>下の行動規範を徹底する。接触記録を全件残す</td></tr><tr><th scope="row">仕様誘導・公告前の情報の取得</th><td><span class="sev sev-hi">高</span></td><td>低〜中</td><td>評価基準・仕様に関与しない。公告予定・更新時期を聞かない</td></tr><tr><th scope="row">上流を受託したことで後続の入札に参加できなくなる</th><td><span class="sev sev-mid">中</span></td><td>中</td><td>5-2のチェックを受託前に行う</td></tr><tr><th scope="row">NSS・情報技術との衝突・囲い込み</th><td><span class="sev sev-mid">中</span></td><td>中〜高</td><td>協力会社ルートを主にする。衝突チェック（5-1）</td></tr><tr><th scope="row">管理部門の単価が小さく採算が合わない</th><td><span class="sev sev-mid">中</span></td><td>中</td><td>段階3への道筋を最初から示す</td></tr><tr><th scope="row">契約部門がLOB寄りで、H2が成り立たない</th><td><span class="sev sev-mid">中</span></td><td>中</td><td>45日判定で降格する</td></tr><tr><th scope="row">面談の獲得に時間がかかる</th><td><span class="sev sev-mid">中</span></td><td>高</td><td>ルートを並行して動かす（2-2）。give-first資料を使う</td></tr><tr><th scope="row">情シスとDX推進の役割分担が不明</th><td><span class="sev sev-mid">中</span></td><td>中</td><td>初回で確認する</td></tr><tr><th scope="row">自社の施設系チームとメッセージが矛盾する</th><td><span class="sev sev-mid">中</span></td><td>中</td><td>2-5の分担と記録の共有</td></tr></tbody></table></div><div class="code-box" id="code"><div class="code-head"><span class="code-sev">重大度：最大</span><span class="code-title">行動規範（私たちのルール）<span class="lb lb-policy">【方針】</span></span><button type="button" class="copy-btn" id="cp14" data-copy="行動規範（私たちのルール）【方針】
+1. 面談は先方の会議室で、2名以上で行う。議事メモを作り、保管する。
+2. 会食・贈答・無償の作業は一切しない。無償で出すのは論点メモ（公開情報だけで作るもの）までとする。
+3. 首都高では、OB・再就職者経由の紹介を使わない。他社でも原則として使わない。
+4. 予定価格、公告中・公告予定の案件、他社の情報、更新時期、次年度予算の項目は聞かない。示された場合は記録して受け取らない。
+5. 公告中の案件の発注担当者とは、正規の手続（質問書など）以外で接触しない。
+6. 評価基準・仕様のすり合わせ、仕様書案の提供はしない。
+7. 非公開資料は契約前には受け取らない。PoCは有償契約の後、顧客環境で行う。
+8. 上流の受託前に、後続入札への参加制限を確認する。
+9. すべての接触を、付録Cの接触記録に24時間以内に記入する。
+10. 高速道路株式会社法の収賄罪の規定〔一般知識・要確認〕と、各社の倫理規程・接触ルール【要一次確認】を、着手前にチーム全員で読む。" data-target="code-list"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">行動規範をコピー</span></button></div><ol class="code-list" id="code-list"><li>面談は<strong>先方の会議室</strong>で、<strong>2名以上</strong>で行う。議事メモを作り、保管する。</li><li>会食・贈答・無償の作業は一切しない。無償で出すのは論点メモ（公開情報だけで作るもの）までとする。</li><li>首都高では、OB・再就職者経由の紹介を使わない。他社でも原則として使わない。</li><li>予定価格、公告中・公告予定の案件、他社の情報、更新時期、次年度予算の項目は聞かない。示された場合は記録して受け取らない。</li><li>公告中の案件の発注担当者とは、正規の手続（質問書など）以外で接触しない。</li><li>評価基準・仕様のすり合わせ、仕様書案の提供はしない。</li><li>非公開資料は契約前には受け取らない。PoCは有償契約の後、顧客環境で行う。</li><li>上流の受託前に、後続入札への参加制限を確認する。</li><li>すべての接触を、付録Cの接触記録に24時間以内に記入する。</li><li>高速道路株式会社法の収賄罪の規定<span class="lb lb-general">〔一般知識・要確認〕</span>と、各社の倫理規程・接触ルール<span class="lb lb-verify">【要一次確認】</span>を、着手前にチーム全員で読む。</li></ol><p class="code-foot">贈収賄・不適切な接触は刑事罰の対象になりうるリスクです（7-1の表で重大度「最大」）。接触はすべて<a href="#c2">付録C-2の接触記録</a>に24時間以内に記入します。</p></div><h3 id="s7-2">7-2. 事前デスクリサーチのチェックリスト</h3><div class="table-wrap" tabindex="0"><table style="min-width:680px"><thead><tr><th scope="col">確認</th><th scope="col">優先</th><th scope="col">確認事項</th><th scope="col">確認先</th></tr></thead><tbody><tr><td class="chk"><input type="checkbox" id="dr-0" data-store="dr-0" aria-label="現行の本社組織図（情シス・契約・法務・人事・経理の所属、DX推進部門の位置） を確認済み"></td><td class="stars">★★★</td><td>現行の本社組織図（情シス・契約・法務・人事・経理の所属、DX推進部門の位置）</td><td><a href="https://www.e-nexco.co.jp/en/company/overview/organization/" target="_blank" rel="noopener">NEXCO東日本</a>、<a href="https://www.shutoko.co.jp/company/info/location/" target="_blank" rel="noopener">首都高</a>、阪神の会社概要、<a href="https://www.c-nexco.co.jp/en/corporate/company/chart/" target="_blank" rel="noopener">NEXCO中日本</a>、<a href="https://corp.w-nexco.co.jp/corporate/organization/" target="_blank" rel="noopener">NEXCO西日本</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-1" data-store="dr-1" aria-label="DX推進部門と情シスの関係、生成AIのオーナーと利用ツール を確認済み"></td><td class="stars">★★★</td><td>DX推進部門と情シスの関係、生成AIのオーナーと利用ツール</td><td>統合報告書、採用情報、各社の発表、<a href="https://www.shutoko.co.jp/company/dx/" target="_blank" rel="noopener">首都高 DX</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-2" data-store="dr-2" aria-label="契約部門の所属と工事契約の件数（成立条件(5)） を確認済み"></td><td class="stars">★★★</td><td>契約部門の所属と工事契約の件数（成立条件(5)）</td><td><a href="https://www.e-nexco.co.jp/assets/pdf/bids/stipulation/const01.pdf" target="_blank" rel="noopener">契約事務処理要領</a>、<a href="https://www.e-nexco.co.jp/bids/public_notice/search_service" target="_blank" rel="noopener">入札公告検索</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-3" data-store="dr-3" aria-label="物品・役務の資格（付録B） を確認済み"></td><td class="stars">★★★</td><td>物品・役務の資格（付録B）</td><td>各社の入札参加資格ページ</td></tr><tr><td class="chk"><input type="checkbox" id="dr-4" data-store="dr-4" aria-label="各社の予算の締め切り・予算サイクル（事業計画の認可の時期を含む） を確認済み"></td><td class="stars">★★★</td><td><strong>各社の予算の締め切り・予算サイクル</strong>（事業計画の認可の時期を含む）</td><td>事業計画の公表資料、IR<span class="lb lb-general">〔一般知識・要確認〕</span></td></tr><tr><td class="chk"><input type="checkbox" id="dr-5" data-store="dr-5" aria-label="お客さまセンターのオーナー を確認済み"></td><td class="stars">★★★</td><td>お客さまセンターのオーナー</td><td><a href="https://www.nttbizsol.jp/case/c-nexco/" target="_blank" rel="noopener">NTTビジネスソリューションズ事例</a>、<a href="https://www.jetro.go.jp/gov_procurement/national/articles/319674/2024062700250000.html" target="_blank" rel="noopener">ジェトロ公告</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-6" data-store="dr-6" aria-label="各社の倫理規程・接触ルール、少額随契の上限、WTO基準額、上流受託者の後続入札の参加制限 を確認済み"></td><td class="stars">★★★</td><td>各社の倫理規程・接触ルール、少額随契の上限、WTO基準額、上流受託者の後続入札の参加制限</td><td>各社の契約規程・コンプライアンス方針、内閣官房の政府調達ページ</td></tr><tr><td class="chk"><input type="checkbox" id="dr-7" data-store="dr-7" aria-label="NSS・情報技術の協力会社制度、NSSの担当範囲（西日本を含むか） を確認済み"></td><td class="stars">★★★</td><td>NSS・情報技術の協力会社制度、NSSの担当範囲（西日本を含むか）</td><td>NSSの会社概要、<a href="https://www.c-nexco.co.jp/corporate/company/disclosure/group/pdf/Gh28.pdf" target="_blank" rel="noopener">NEXCO中日本 グループ会社の情報</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-8" data-store="dr-8" aria-label="公表済みの発注見通し・公告（更新時期は面談ではなくここで確認する） を確認済み"></td><td class="stars">★★☆</td><td>公表済みの発注見通し・公告（更新時期は面談ではなくここで確認する）</td><td>各社の入札情報ページ、ジェトロDB</td></tr><tr><td class="chk"><input type="checkbox" id="dr-9" data-store="dr-9" aria-label="情報系のクラウド方針（公開情報。なければ面談の2回目で確認） を確認済み"></td><td class="stars">★★☆</td><td>情報系のクラウド方針（公開情報。なければ面談の2回目で確認）</td><td>情報セキュリティ方針の公開版</td></tr><tr><td class="chk"><input type="checkbox" id="dr-10" data-store="dr-10" aria-label="管理部門の人員規模、グループ会社の数 を確認済み"></td><td class="stars">★★☆</td><td>管理部門の人員規模、グループ会社の数</td><td>有価証券報告書、統合報告書</td></tr><tr><td class="chk"><input type="checkbox" id="dr-11" data-store="dr-11" aria-label="中計本文の生産性・人材KPI を確認済み"></td><td class="stars">★★☆</td><td>中計本文の生産性・人材KPI</td><td><a href="https://www.e-nexco.co.jp/pressroom/cms_assets/pressroom/2026/04/22/01.pdf" target="_blank" rel="noopener">NEXCO東日本 中計PDF</a>、<a href="https://www.hanshin-exp.co.jp/company/files/chukikeieikeikaku2026-2028.pdf" target="_blank" rel="noopener">阪神 中計PDF</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-12" data-store="dr-12" aria-label="阪神 PROZITの機能と展開状況、LAWGUEの発表日 を確認済み"></td><td class="stars">★☆☆</td><td>阪神 PROZITの機能と展開状況、LAWGUEの発表日</td><td><a href="https://www.hanshin-exp.co.jp/company/topics/files/20260414_pressrelease_1.pdf" target="_blank" rel="noopener">阪神 2026年度の主な取り組み</a>、<a href="https://prtimes.jp/main/html/rd/p/000000109.000037680.html" target="_blank" rel="noopener">PR TIMES</a></td></tr><tr><td class="chk"><input type="checkbox" id="dr-13" data-store="dr-13" aria-label="首都高の改善措置への対応状況（前提知識として。話題にはしない） を確認済み"></td><td class="stars">★☆☆</td><td>首都高の改善措置への対応状況（前提知識として。話題にはしない）</td><td><a href="https://www.jftc.go.jp/houdou/pressrelease/2026/apr/260422_yonjyo.shutoko.html" target="_blank" rel="noopener">公取委</a>、首都高のプレス</td></tr><tr><td class="chk"><input type="checkbox" id="dr-14" data-store="dr-14" aria-label="業界行事の日程（ハイウェイテクノフェアなど）、JUAS研究会の参加条件 を確認済み"></td><td class="stars">★☆☆</td><td>業界行事の日程（ハイウェイテクノフェアなど）、JUAS研究会の参加条件</td><td>主催者のサイト<span class="lb lb-general">〔一般知識・要確認〕</span></td></tr></tbody></table></div></section><div id="appendix" class="appx-head"><h2 class="appx-h2">付録</h2><p class="hint">開いて使う資料です。</p></div><section id="appA" class="sec-app"><details class="appx"><summary>付録A 予備の質問バンク（「必ず聞く5問」を聞き終えた後に使う）</summary><div class="appx-body"><p>流れは「現状 → 困りごと → 影響 → 意思決定・手続 → 時期」の順です。予算・資格・更新時期・公告予定は聞きません。</p><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">テーマ</th><th scope="col">質問</th><th scope="col">意図</th><th scope="col">使うステージ</th></tr></thead><tbody><tr><th scope="row">組織</th><td>「情報システム部門とDX推進部門は、どう役割を分けていますか」</td><td>C'(b)の判定</td><td>初回〜2回目</td></tr><tr><th scope="row">組織</th><td>「お客さまセンターはどちらの部門のご担当ですか」</td><td>W8の判定</td><td>初回〜2回目</td></tr><tr><th scope="row">生成AI</th><td>「よく使う業務と、使われていない部門はどこですか」</td><td>定着の偏り</td><td>初回</td></tr><tr><th scope="row">生成AI</th><td>「機密情報の扱いのルールはありますか」</td><td>ガバナンス</td><td>2回目</td></tr><tr><th scope="row">生成AI</th><td>「事業部門から基盤を使いたいという声はありますか」</td><td>H6</td><td>2回目</td></tr><tr><th scope="row">契約</th><td>「変更契約と検査書類で、とくに手間がかかる点は」</td><td>ボトルネック</td><td>2回目</td></tr><tr><th scope="row">法務</th><td>「規程の改定はどのくらいの頻度ですか」</td><td>規模</td><td>2回目</td></tr><tr><th scope="row">人事</th><td>「人的資本の開示に使う指標は、どこから集めていますか」</td><td>人材データ</td><td>2回目</td></tr><tr><th scope="row">経理</th><td>「予実管理や中計KPIの集計は、どのように行っていますか」</td><td>経営管理</td><td>2回目</td></tr><tr><th scope="row">セキュリティ</th><td>「統一基準をどう扱うご方針ですか」</td><td>規制ドライバー（誘導しない聞き方）</td><td>2回目</td></tr><tr><th scope="row">セキュリティ</th><td>「グループ会社のセキュリティ水準は、どなたが見ていますか」</td><td>baseline</td><td>2回目</td></tr><tr><th scope="row">中計</th><td>「中計の生産性・人材の目標は、どのような指標で測る予定ですか」</td><td>KPIの空白</td><td>2回目</td></tr><tr><th scope="row">手続</th><td>「有償の小規模な取り組みの場合、一般的にどのような手続になりますか」</td><td>発注方式（個別案件ではなく一般論で）</td><td>2回目以降</td></tr></tbody></table></div></div></details></section><section id="appB" class="sec-app"><details class="appx"><summary>付録B 競争参加資格の実務表（すべて要一次確認）</summary><div class="appx-body"><p><span class="lb lb-policy">【方針】</span>第1週に申請します。等級と審査時期が、受注できる時期を左右します。</p><div class="table-wrap" tabindex="0"><table class="" style="min-width:1040px"><thead><tr><th scope="col">会社</th><th scope="col">審査方式（独自か統一資格か）</th><th scope="col">受付（随時か定期か）</th><th scope="col">想定区分（役務：情報処理・調査研究・研修、物品：賃貸借・ソフトウェア）</th><th scope="col">等級</th><th scope="col">電子入札・ICカード</th><th scope="col">審査日数</th><th scope="col">分かっていること</th></tr></thead><tbody><tr><th scope="row">NEXCO東日本</th><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td><span class="lb lb-fact">【事実】</span>入札公告検索は物品・役務と工事の両方を扱い、条件に合う公告をメール配信（<a href="https://www.e-nexco.co.jp/bids/public_notice/search_service" target="_blank" rel="noopener">検索</a>、<a href="https://www.e-nexco.co.jp/amp/news/bids/2023/0313/00012357.html" target="_blank" rel="noopener">メール配信</a>）</td></tr><tr><th scope="row">阪神高速</th><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td><span class="lb lb-unconf">【未確認】</span>自社の調達ポータルのURL。WTO対象の案件はジェトロDBに掲載</td></tr><tr><th scope="row">首都高</th><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>電子入札システムあり（<a href="https://www.shutoko.co.jp/business/electronicbid/" target="_blank" rel="noopener">首都高</a>）</td><td>要確認</td><td>入札公告・結果のページあり</td></tr><tr><th scope="row">NEXCO中日本</th><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>入札情報公開システム（運営は日立システムズとの要約）</td><td>要確認</td><td><a href="https://www.c-nexco.co.jp/nl/corporate/contract/auction-info/" target="_blank" rel="noopener">入札・契約情報</a></td></tr><tr><th scope="row">NEXCO西日本</th><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>電子入札システムあり（運用管理は随意契約。<a href="https://www.jetro.go.jp/gov_procurement/national/articles/194604/2021030300290000.html" target="_blank" rel="noopener">ジェトロ</a>）</td><td>要確認</td><td><span class="lb lb-unconf">【未確認】</span>自社の入札ページのURL</td></tr><tr><th scope="row">本四高速</th><td>要確認</td><td>要確認</td><td>要確認</td><td>要確認</td><td>入札情報公開システム</td><td>要確認</td><td><a href="https://www.jb-honshi.co.jp/corp_index/keiyaku/" target="_blank" rel="noopener">契約情報</a></td></tr><tr><th scope="row">NSS・情報技術（協力会社）</th><td>要確認</td><td>要確認</td><td>―</td><td>―</td><td>―</td><td>要確認</td><td>協力会社の登録制度の有無から確認</td></tr></tbody></table></div></div></details></section><section id="appC" class="sec-app"><details class="appx"><summary>付録C 管理用テンプレート</summary><div class="appx-body"><h3 id="c1">C-1. 1枚アカウントプラン</h3><div class="tpl"><div class="tpl-bar"><span class="tpl-name">C-1. 1枚アカウントプラン</span><button type="button" class="copy-btn" id="cp15" data-copy="C-1. 1枚アカウントプラン
+■会社／優先度／主攻・副攻・限定：
+■今期の目標（ステージと金額）：例：S5×1件、提案金額○○万円
+■スコープ（B&#x27;／C&#x27;(b)）と対象部門：
+■公開情報の要点（中計の人材・生産性、決算、最近の発表）：
+■パワーマップ（役割／氏名／関係の温度：未接触・冷・中・温／影響力／担当）：
+■仮説カード（持参する順）と判定の状況：
+■獲得ルート（2-2）と紹介者：
+■ゲートキーパー（NSS・情報技術）との関係と、衝突チェックの結果：
+■調達ルート（資格区分・等級、少額随契・見積合わせ・再委託）：
+■成立条件(1)〜(6)の判定：
+■上流受託の後続入札の参加制限：あり・なし・未確認
+■自社の施設系チームとの調整事項：
+■次の3アクション（担当・期限）：
+■リスクと、No-goの兆候：" data-target="tpl-c1"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">様式をコピー</span></button></div><div class="table-wrap" tabindex="0" id="tpl-c1"><table class=""><thead><tr><th scope="col">項目</th><th scope="col">記入内容</th></tr></thead><tbody><tr><th scope="row">会社／優先度／主攻・副攻・限定</th><td></td></tr><tr><th scope="row">今期の目標（ステージと金額）</th><td>例：S5×1件、提案金額○○万円</td></tr><tr><th scope="row">スコープ（B'／C'(b)）と対象部門</th><td></td></tr><tr><th scope="row">公開情報の要点（中計の人材・生産性、決算、最近の発表）</th><td></td></tr><tr><th scope="row">パワーマップ（役割／氏名／関係の温度：未接触・冷・中・温／影響力／担当）</th><td></td></tr><tr><th scope="row">仮説カード（持参する順）と判定の状況</th><td></td></tr><tr><th scope="row">獲得ルート（2-2）と紹介者</th><td></td></tr><tr><th scope="row">ゲートキーパー（NSS・情報技術）との関係と、衝突チェックの結果</th><td></td></tr><tr><th scope="row">調達ルート（資格区分・等級、少額随契・見積合わせ・再委託）</th><td></td></tr><tr><th scope="row">成立条件(1)〜(6)の判定</th><td></td></tr><tr><th scope="row">上流受託の後続入札の参加制限</th><td>あり・なし・未確認</td></tr><tr><th scope="row">自社の施設系チームとの調整事項</th><td></td></tr><tr><th scope="row">次の3アクション（担当・期限）</th><td></td></tr><tr><th scope="row">リスクと、No-goの兆候</th><td></td></tr></tbody></table></div></div><h3 id="c2">C-2. 接触記録（全件、24時間以内に記入）</h3><div class="tpl"><div class="tpl-bar"><span class="tpl-name">C-2. 接触記録</span><button type="button" class="copy-btn" id="cp16" data-copy="C-2. 接触記録
+■日時／場所（先方会議室など）／方法（対面・オンライン）：
+■先方の出席者（部署・役職）：
+■当方の出席者（2名以上）：
+■紹介者・獲得ルート：
+■話題（要約）：
+■渡した資料／受け取った資料（公開か非公開か。非公開なら受け取らなかった旨）：
+■公告中の案件に関わる話題の有無（ありの場合は対応を記載）：
+■飲食・贈答の有無（「なし」を明記）：
+■次回の約束：" data-target="tpl-c2"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">様式をコピー</span></button></div><div class="table-wrap" tabindex="0" id="tpl-c2"><table class=""><thead><tr><th scope="col">項目</th><th scope="col">記入内容</th></tr></thead><tbody><tr><th scope="row">日時／場所（先方会議室など）／方法（対面・オンライン）</th><td></td></tr><tr><th scope="row">先方の出席者（部署・役職）</th><td></td></tr><tr><th scope="row">当方の出席者（2名以上）</th><td></td></tr><tr><th scope="row">紹介者・獲得ルート</th><td></td></tr><tr><th scope="row">話題（要約）</th><td></td></tr><tr><th scope="row">渡した資料／受け取った資料（公開か非公開か。非公開なら受け取らなかった旨）</th><td></td></tr><tr><th scope="row">公告中の案件に関わる話題の有無（ありの場合は対応を記載）</th><td></td></tr><tr><th scope="row">飲食・贈答の有無（「なし」を明記）</th><td></td></tr><tr><th scope="row">次回の約束</th><td></td></tr></tbody></table></div></div><h3 id="c3">C-3. 面談後の仮説更新</h3><div class="tpl"><div class="tpl-bar"><span class="tpl-name">C-3. 面談後の仮説更新</span><button type="button" class="copy-btn" id="cp17" data-copy="C-3. 面談後の仮説更新
+■持参した仮説カード：H□
+■判定：当たり／一部当たり／外れ／判断保留
+■相手の言葉で聞けた課題（引用）：「　　」
+■定量情報（件数・時間・人数）：
+■真のシグナル／偽のシグナル：
+■判断者・手続（一般論として聞けた範囲）：
+■NSS・情報技術の関与：
+■紹介された次の部門・人物：
+■成立条件(1)〜(6)の更新：○／×／未確認
+■CRMステージの更新：S□→S□
+■次のアクション（担当・期限）：" data-target="tpl-c3"><span class="copy-ico" aria-hidden="true">⧉</span><span class="copy-lbl">様式をコピー</span></button></div><div class="table-wrap" tabindex="0" id="tpl-c3"><table class=""><thead><tr><th scope="col">項目</th><th scope="col">記入内容</th></tr></thead><tbody><tr><th scope="row">持参した仮説カード</th><td>H□</td></tr><tr><th scope="row">判定</th><td>当たり／一部当たり／外れ／判断保留</td></tr><tr><th scope="row">相手の言葉で聞けた課題（引用）</th><td>「　　」</td></tr><tr><th scope="row">定量情報（件数・時間・人数）</th><td></td></tr><tr><th scope="row">真のシグナル／偽のシグナル</th><td></td></tr><tr><th scope="row">判断者・手続（一般論として聞けた範囲）</th><td></td></tr><tr><th scope="row">NSS・情報技術の関与</th><td></td></tr><tr><th scope="row">紹介された次の部門・人物</th><td></td></tr><tr><th scope="row">成立条件(1)〜(6)の更新</th><td>○／×／未確認</td></tr><tr><th scope="row">CRMステージの更新</th><td>S□→S□</td></tr><tr><th scope="row">次のアクション（担当・期限）</th><td></td></tr></tbody></table></div></div><h3 id="c4">C-4. 週次パイプラインレビュー（30分）</h3><p>議題は次の5つです。①ステージの移動（S0〜S7）と提案金額、②45日・90日判定の対象、③行動規範の逸脱・懸念の有無（接触記録の確認）、④ゲートキーパーとの調整、⑤プリセールス工数の実績と予算の比較。</p></div></details></section><section id="appD" class="sec-app"><details class="appx"><summary>付録D レビュー対応表</summary><div class="appx-body"><div class="table-wrap" tabindex="0"><table class="" style="min-width:680px"><thead><tr><th scope="col">#</th><th scope="col">レビュー項目</th><th scope="col">判断</th><th scope="col">反映先・理由</th></tr></thead><tbody><tr><th scope="row">C1</th><td>首都高の優先度と不祥事の扱いが矛盾</td><td><strong>一部採用</strong></td><td>2-1、0章、4-4、H1・H2。公取委を選定理由から外し、首都高ではH2を持参せず、契約・総務・監査には2026年度中は接触しないことにした。H1は首都高向けに「224人の次」へ変形した。順位はレビュー案（首都高2位）を採らず<strong>3位（限定）</strong>とした。管理部門でSaaSを購入した証拠がある阪神高速を2位にする方が、成立条件(1)(3)の検証に有利なため（M7の「副攻＝阪神」とも整合）</td></tr><tr><th scope="row">C2</th><td>「管理費圧縮」が会計とずれている</td><td><strong>一部採用</strong></td><td>1-2のT1、5-3。T1を担い手不足に書き換え、指標を時間・属人化・リードタイムにし、管理費は背景の<span class="lb lb-hyp">【仮説】</span>に移した。「管理費用2,390億円は道路の維持管理の費用」という指摘は、ノート（日経：植栽伐採・舗装補修など）で確認でき正しい。一方「出典は2社分のみ」という指摘は、v2レポートでは6社すべてに出典がある（首都高は2024年度、ブログ経由のものは確度:中）ため採らない。本書では会社ごとの出典を明記した</td></tr><tr><th scope="row">C3</th><td>調達の公正性に触れる手順</td><td>採用</td><td>4-2（評価基準に関与しない）、2-4・H1・H2（更新時期・予算項目の質問を削除）、5-2（上流受託の前のチェック）、7-1の行動規範6・8</td></tr><tr><th scope="row">C4</th><td>PoCとデータの扱いが矛盾</td><td>採用</td><td>5-1の原則、H2・H5、4-4、行動規範2・7</td></tr><tr><th scope="row">C5</th><td>接待・贈答の扱いが弱い</td><td>採用</td><td>7-1（重大度「最大」、行動規範1〜10）、付録C-2。収賄罪の規定は<span class="lb lb-general">〔一般知識・要確認〕</span>とした</td></tr><tr><th scope="row">C6</th><td>90日計画が予算サイクル・年末と重なる</td><td>採用</td><td>0章、6-1、6-2、7-2。予算サイクルの時期は<span class="lb lb-general">〔一般知識・要確認〕</span>とした</td></tr><tr><th scope="row">M1</th><td>質問バンクが長い</td><td>採用</td><td>4-1に「必ず聞く5問」、残りは付録Aへ。予算・資格は初回から外した</td></tr><tr><th scope="row">M2</th><td>オープニングが情報収集に聞こえる</td><td>採用</td><td>4-3。「他社で定着させた」とは言えないため、「公開事例と調査から整理した型」と表現した</td></tr><tr><th scope="row">M3</th><td>T2が未検証の前提</td><td>採用</td><td>1-2、H2、6-3の45日判定、成立条件(5)</td></tr><tr><th scope="row">M4</th><td>監査室を営業ルートにしている</td><td>採用</td><td>2-3、2-4、H7。定義C'(b)からも内部監査を外した</td></tr><tr><th scope="row">M5</th><td>NSSとの関係が楽観的</td><td><strong>一部採用</strong></td><td>0章、5-1、5-4。協力会社・再委託を主ルートにし、O4・O5はNEXCOでは直接提案しないことにした。ただし直接提案は「研修とSaaSのみ」ではなく、<strong>業務診断（O2・O3）も含める</strong>。業務プロセスの診断はITの運用・企画ではなく、NSSの本業と重ならないと判断したため（システム化の部分はNSS経由）</td></tr><tr><th scope="row">M6</th><td>Go/No-goとKPIがあいまい</td><td>採用</td><td>6-3（会社ごと）、6-4（CRMステージの定義、S6＝受注見込み、金額・転換率・紹介数）。資格は等級と時期の問題として付録Bと6-3に反映した</td></tr><tr><th scope="row">M7</th><td>攻める会社が多い</td><td>採用</td><td>0章、2-1、6-1（主攻：東日本、副攻：阪神、首都高は限定）</td></tr><tr><th scope="row">m1</th><td><span class="lb lb-fact">【事実】</span>に推論が混じっている</td><td>採用</td><td>2-1、H8。<span class="lb lb-hyp">【仮説】</span>と<span class="lb lb-unconf">【未確認】</span>のラベルを使い分けた</td></tr><tr><th scope="row">m2</th><td>凡例にないラベル</td><td>採用</td><td>表記ルールに<span class="lb lb-policy">【方針】</span><span class="lb lb-unconf">【未確認】</span><span class="lb lb-general">〔一般知識・要確認〕</span>を追加した</td></tr><tr><th scope="row">m3</th><td>統一基準の時制、PCリースの時期</td><td>採用</td><td>H7、6-2（「施行（要一次確認）」）、PCリースはv2の「2025〜2026年度（推定）」に揃えた</td></tr><tr><th scope="row">m4</th><td>認可手続を法務に聞くのは的外れ</td><td>採用</td><td>H5、2-4、4-1から削除し、経営企画・事業部門の所管の可能性として注記した</td></tr><tr><th scope="row">m5</th><td>セキュリティの質問が誘導的</td><td>採用</td><td>H7、付録A</td></tr><tr><th scope="row">m6</th><td>首都高DX推進室はC'(b)</td><td>採用</td><td>0章の表、2-1</td></tr><tr><th scope="row">m7</th><td>v2の9-3と逆の方針</td><td>採用</td><td>冒頭の位置づけで上書き箇所を明記した</td></tr><tr><th scope="row">追加1</th><td>初回面談の獲得ルート表</td><td>採用</td><td>2-2。行事の日程と参加条件は<span class="lb lb-general">〔一般知識・要確認〕</span></td></tr><tr><th scope="row">追加2</th><td>社内の調整</td><td>採用</td><td>2-5</td></tr><tr><th scope="row">追加3</th><td>競争参加資格の実務表</td><td>採用</td><td>付録B（ほとんどが要確認）</td></tr><tr><th scope="row">追加4</th><td>営業の管理用資料</td><td>採用</td><td>付録C-1（パワーマップを含む）、C-4、6-1のプリセールス工数、6-4のCRMステージ</td></tr><tr><th scope="row">追加5</th><td>調達ルートの早見表</td><td>採用</td><td>5-1</td></tr><tr><th scope="row">追加6</th><td>接触記録の様式</td><td>採用</td><td>付録C-2</td></tr></tbody></table></div></div></details></section>
+    <section id="refs" class="sec">
+      <h2><span class="h2t">出典一覧</span></h2>
+      <p>本文中で引用したURLの一覧です（初出順、重複は除く。計47件）。本文の各引用もそのままリンクになっています。</p>
+      <details class="refs"><summary>出典を表示（47件）</summary><ol class="ref-list"><li><a href="https://corp.w-nexco.co.jp/recruit/w-nexco/special/attention.html" target="_blank" rel="noopener">施設職入門</a><span class="ref-where">1-1. スコープ宣言（図にできる1段落）</span><span class="ref-url">https://corp.w-nexco.co.jp/recruit/w-nexco/special/attention.html</span></li><li><a href="https://www.e-nexco.co.jp/en/company/overview/organization/" target="_blank" rel="noopener">組織図</a><span class="ref-where">1-1. スコープ宣言（図にできる1段落）</span><span class="ref-url">https://www.e-nexco.co.jp/en/company/overview/organization/</span></li><li><a href="https://www.tecmex.or.jp/technology-lecture/%E7%AC%AC25%E5%9B%9E%EF%BC%9A%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%AE%E6%9C%AA%E6%9D%A5%E3%82%92%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E6%94%AF%E3%81%88%E3%82%8B/" target="_blank" rel="noopener">TECMEX講演</a><span class="ref-where">1-1. スコープ宣言（図にできる1段落）</span><span class="ref-url">https://www.tecmex.or.jp/technology-lecture/%E7%AC%AC25%E5%9B%9E%EF%BC%9A%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E3%81%AE%E6%9C%AA%E6%9D%A5%E3%82%92%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E6%94%AF%E3%81%88%E3%82%8B/</span></li><li><a href="https://www.aba-j.or.jp/info/industry/19930/" target="_blank" rel="noopener">日本自動車会議所</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.aba-j.or.jp/info/industry/19930/</span></li><li><a href="https://www.hanshin-exp.co.jp/company/files/chukikeieikeikaku2026-2028.pdf" target="_blank" rel="noopener">中計PDF</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.hanshin-exp.co.jp/company/files/chukikeieikeikaku2026-2028.pdf</span></li><li><a href="https://r2sj.net/news/21896" target="_blank" rel="noopener">R2SJ</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://r2sj.net/news/21896</span></li><li><a href="https://www.e-nexco.co.jp/pressroom/head_office/2026/0422/00016154.html" target="_blank" rel="noopener">プレスリリース</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.e-nexco.co.jp/pressroom/head_office/2026/0422/00016154.html</span></li><li><a href="https://www.ipa.go.jp/digital/chousa/dx-trend/dx-trend-2026.html" target="_blank" rel="noopener">IPA</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.ipa.go.jp/digital/chousa/dx-trend/dx-trend-2026.html</span></li><li><a href="https://www.e-nexco.co.jp/bids/public_notice/search_service" target="_blank" rel="noopener">検索</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.e-nexco.co.jp/bids/public_notice/search_service</span></li><li><a href="https://www.e-nexco.co.jp/assets/pdf/bids/stipulation/const01.pdf" target="_blank" rel="noopener">要領</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.e-nexco.co.jp/assets/pdf/bids/stipulation/const01.pdf</span></li><li><a href="https://www.hanshin-exp.co.jp/company/topics/files/20260414_pressrelease_1.pdf" target="_blank" rel="noopener">2026年度の主な取り組み</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.hanshin-exp.co.jp/company/topics/files/20260414_pressrelease_1.pdf</span></li><li><a href="https://www.businessinsider.jp/article/2608-shutoko-google-gemini-dx-adoption/" target="_blank" rel="noopener">Business Insider</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.businessinsider.jp/article/2608-shutoko-google-gemini-dx-adoption/</span></li><li><a href="https://www.nikkei.com/article/DGXZQOUF081BX0Y6A600C2000000/" target="_blank" rel="noopener">日経</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.nikkei.com/article/DGXZQOUF081BX0Y6A600C2000000/</span></li><li><a href="https://www.nikkei.com/article/DGXZQOFD094MI0Z00C26A6000000/" target="_blank" rel="noopener">日経</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.nikkei.com/article/DGXZQOFD094MI0Z00C26A6000000/</span></li><li><a href="https://www.firstaccess.co.jp/fa-blog/archives/21137" target="_blank" rel="noopener">ファーストアクセス 東</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.firstaccess.co.jp/fa-blog/archives/21137</span></li><li><a href="https://www.firstaccess.co.jp/fa-blog/archives/21156" target="_blank" rel="noopener">阪神</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.firstaccess.co.jp/fa-blog/archives/21156</span></li><li><a href="https://www.firstaccess.co.jp/fa-blog/archives/21163" target="_blank" rel="noopener">本四</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://www.firstaccess.co.jp/fa-blog/archives/21163</span></li><li><a href="https://webun.jp/articles/-/818084" target="_blank" rel="noopener">共同通信配信</a><span class="ref-where">1-2. 3つの勝ち筋</span><span class="ref-url">https://webun.jp/articles/-/818084</span></li><li><a href="https://www.jftc.go.jp/houdou/pressrelease/2026/apr/260422_yonjyo.shutoko.html" target="_blank" rel="noopener">公取委</a><span class="ref-where">2-1. 会社の優先順位（v1から変更）</span><span class="ref-url">https://www.jftc.go.jp/houdou/pressrelease/2026/apr/260422_yonjyo.shutoko.html</span></li><li><a href="https://prtimes.jp/main/html/rd/p/000000109.000037680.html" target="_blank" rel="noopener">PR TIMES</a><span class="ref-where">2-1. 会社の優先順位（v1から変更）</span><span class="ref-url">https://prtimes.jp/main/html/rd/p/000000109.000037680.html</span></li><li><a href="https://www.isdecisions.jp/resources/casestudy/5042/" target="_blank" rel="noopener">UserLock事例</a><span class="ref-where">2-1. 会社の優先順位（v1から変更）</span><span class="ref-url">https://www.isdecisions.jp/resources/casestudy/5042/</span></li><li><a href="https://corp.w-nexco.co.jp/corporate/release/hq/r3/0630/" target="_blank" rel="noopener">2021/6/30</a><span class="ref-where">2-1. 会社の優先順位（v1から変更）</span><span class="ref-url">https://corp.w-nexco.co.jp/corporate/release/hq/r3/0630/</span></li><li><a href="https://kn.itmedia.co.jp/kn/articles/2608/21/news044.html" target="_blank" rel="noopener">キーマンズネット</a><span class="ref-where">H1 全社生成AIの定着・AIガバナンス（W1、22点、A判定）</span><span class="ref-url">https://kn.itmedia.co.jp/kn/articles/2608/21/news044.html</span></li><li><a href="https://prtimes.jp/main/html/rd/p/000000013.000160762.html" target="_blank" rel="noopener">JUAS速報</a><span class="ref-where">H1 全社生成AIの定着・AIガバナンス（W1、22点、A判定）</span><span class="ref-url">https://prtimes.jp/main/html/rd/p/000000013.000160762.html</span></li><li><a href="https://corp.w-nexco.co.jp/corporate/group/nexco_sys/" target="_blank" rel="noopener">NEXCO西日本 グループ紹介</a><span class="ref-where">H4 管理部門のSaaS＋AI横展開（W6、20点、A判定。人事・労務N3、経理・経営管理N4、グループ共通化N5を含む）</span><span class="ref-url">https://corp.w-nexco.co.jp/corporate/group/nexco_sys/</span></li><li><a href="https://www.aba-j.or.jp/info/industry/26793/" target="_blank" rel="noopener">日本自動車会議所</a><span class="ref-where">H4 管理部門のSaaS＋AI横展開（W6、20点、A判定。人事・労務N3、経理・経営管理N4、グループ共通化N5を含む）</span><span class="ref-url">https://www.aba-j.or.jp/info/industry/26793/</span></li><li><a href="https://www.itmedia.co.jp/aiplus/article/2608/05/2000000383/" target="_blank" rel="noopener">ITmedia AI+</a><span class="ref-where">H6 LOBへ全社共通サービスを開放（N7、18点、B判定）</span><span class="ref-url">https://www.itmedia.co.jp/aiplus/article/2608/05/2000000383/</span></li><li><a href="https://www.cyber.go.jp/pdf/policy/infra/jyuhurakijun_2026.pdf" target="_blank" rel="noopener">統一基準</a><span class="ref-where">H7 社内IT・グループのセキュリティbaselineと全社IT統制（W9＋W3&#x27;、18点・16点、B判定）</span><span class="ref-url">https://www.cyber.go.jp/pdf/policy/infra/jyuhurakijun_2026.pdf</span></li><li><a href="https://www.nisc.go.jp/pdf/policy/infra/cip_policy_abst_2024.pdf" target="_blank" rel="noopener">NISC</a><span class="ref-where">H7 社内IT・グループのセキュリティbaselineと全社IT統制（W9＋W3&#x27;、18点・16点、B判定）</span><span class="ref-url">https://www.nisc.go.jp/pdf/policy/infra/cip_policy_abst_2024.pdf</span></li><li><a href="https://www.shutoko.co.jp/company/press/2024/data/04/10_chukikeiei/" target="_blank" rel="noopener">中計プレス</a><span class="ref-where">H8 次期中計のDX KPIとDX認定（W7、19点、B判定）</span><span class="ref-url">https://www.shutoko.co.jp/company/press/2024/data/04/10_chukikeiei/</span></li><li><a href="https://www.hanshin-tech.co.jp/news/2024/20241112001186.html" target="_blank" rel="noopener">阪神高速技研</a><span class="ref-where">H8 次期中計のDX KPIとDX認定（W7、19点、B判定）</span><span class="ref-url">https://www.hanshin-tech.co.jp/news/2024/20241112001186.html</span></li><li><a href="https://www.nttbizsol.jp/case/c-nexco/" target="_blank" rel="noopener">NTTビジネスソリューションズ</a><span class="ref-where">5-3. 価値ロジック（効果の言い方）</span><span class="ref-url">https://www.nttbizsol.jp/case/c-nexco/</span></li><li><a href="https://www.r-agent.com/company/a0748/" target="_blank" rel="noopener">リクルートエージェント</a><span class="ref-where">5-4. パートナー戦略：初年度はNSSの協力会社ルートを主にする</span><span class="ref-url">https://www.r-agent.com/company/a0748/</span></li><li><a href="https://www.green-japan.com/company/11189" target="_blank" rel="noopener">Green</a><span class="ref-where">5-4. パートナー戦略：初年度はNSSの協力会社ルートを主にする</span><span class="ref-url">https://www.green-japan.com/company/11189</span></li><li><a href="https://www.cas.go.jp/jp/seisaku/chotatsu/04tyoutasu/rakusatsu/4_computer/pdf/420.pdf" target="_blank" rel="noopener">内閣官房420</a><span class="ref-where">5-4. パートナー戦略：初年度はNSSの協力会社ルートを主にする</span><span class="ref-url">https://www.cas.go.jp/jp/seisaku/chotatsu/04tyoutasu/rakusatsu/4_computer/pdf/420.pdf</span></li><li><a href="https://www.shutoko.co.jp/company/info/location/" target="_blank" rel="noopener">首都高</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://www.shutoko.co.jp/company/info/location/</span></li><li><a href="https://www.c-nexco.co.jp/en/corporate/company/chart/" target="_blank" rel="noopener">NEXCO中日本</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://www.c-nexco.co.jp/en/corporate/company/chart/</span></li><li><a href="https://corp.w-nexco.co.jp/corporate/organization/" target="_blank" rel="noopener">NEXCO西日本</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://corp.w-nexco.co.jp/corporate/organization/</span></li><li><a href="https://www.shutoko.co.jp/company/dx/" target="_blank" rel="noopener">首都高 DX</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://www.shutoko.co.jp/company/dx/</span></li><li><a href="https://www.jetro.go.jp/gov_procurement/national/articles/319674/2024062700250000.html" target="_blank" rel="noopener">ジェトロ公告</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://www.jetro.go.jp/gov_procurement/national/articles/319674/2024062700250000.html</span></li><li><a href="https://www.c-nexco.co.jp/corporate/company/disclosure/group/pdf/Gh28.pdf" target="_blank" rel="noopener">NEXCO中日本 グループ会社の情報</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://www.c-nexco.co.jp/corporate/company/disclosure/group/pdf/Gh28.pdf</span></li><li><a href="https://www.e-nexco.co.jp/pressroom/cms_assets/pressroom/2026/04/22/01.pdf" target="_blank" rel="noopener">NEXCO東日本 中計PDF</a><span class="ref-where">7-2. 事前デスクリサーチのチェックリスト</span><span class="ref-url">https://www.e-nexco.co.jp/pressroom/cms_assets/pressroom/2026/04/22/01.pdf</span></li><li><a href="https://www.e-nexco.co.jp/amp/news/bids/2023/0313/00012357.html" target="_blank" rel="noopener">メール配信</a><span class="ref-where">付録B 競争参加資格の実務表（すべて要一次確認）</span><span class="ref-url">https://www.e-nexco.co.jp/amp/news/bids/2023/0313/00012357.html</span></li><li><a href="https://www.shutoko.co.jp/business/electronicbid/" target="_blank" rel="noopener">首都高</a><span class="ref-where">付録B 競争参加資格の実務表（すべて要一次確認）</span><span class="ref-url">https://www.shutoko.co.jp/business/electronicbid/</span></li><li><a href="https://www.c-nexco.co.jp/nl/corporate/contract/auction-info/" target="_blank" rel="noopener">入札・契約情報</a><span class="ref-where">付録B 競争参加資格の実務表（すべて要一次確認）</span><span class="ref-url">https://www.c-nexco.co.jp/nl/corporate/contract/auction-info/</span></li><li><a href="https://www.jetro.go.jp/gov_procurement/national/articles/194604/2021030300290000.html" target="_blank" rel="noopener">ジェトロ</a><span class="ref-where">付録B 競争参加資格の実務表（すべて要一次確認）</span><span class="ref-url">https://www.jetro.go.jp/gov_procurement/national/articles/194604/2021030300290000.html</span></li><li><a href="https://www.jb-honshi.co.jp/corp_index/keiyaku/" target="_blank" rel="noopener">契約情報</a><span class="ref-where">付録B 競争参加資格の実務表（すべて要一次確認）</span><span class="ref-url">https://www.jb-honshi.co.jp/corp_index/keiyaku/</span></li></ol></details>
+    </section>
+    <footer class="foot"><p>高速道路 情報系 攻略戦略 v2 ・ 2026-10-03 ・ 根拠は<a href="https://claude.ai/artifact/M8ejeTFRg4cubs9mcvBZ9n" target="_blank" rel="noopener">ホワイトスペース調査レポート v2</a>。公開情報は検索要約に基づくため、【要一次確認】は面談資料・提案書に載せる前に一次資料で照合してください。</p></footer>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+(function () {
+  // ---------- per-viewer storage (optional) ----------
+  var PREFIX = "hwy-strategy-v2:";
+  function sget(k) { try { return window.localStorage.getItem(PREFIX + k); } catch (e) { return null; } }
+  function sset(k, v) { try { if (v === null) window.localStorage.removeItem(PREFIX + k); else window.localStorage.setItem(PREFIX + k, v); } catch (e) {} }
+
+  document.querySelectorAll("input[data-store]").forEach(function (cb) {
+    if (sget(cb.getAttribute("data-store")) === "1") cb.checked = true;
+    cb.addEventListener("change", function () { sset(cb.getAttribute("data-store"), cb.checked ? "1" : null); });
+  });
+  var reset = document.getElementById("hg-reset");
+  if (reset) reset.addEventListener("click", function () {
+    document.querySelectorAll('#hearing-tool input[data-store]').forEach(function (cb) { cb.checked = false; sset(cb.getAttribute("data-store"), null); });
+    toast("聞いた質問のチェックを外しました");
+  });
+
+  // ---------- toast ----------
+  var toastEl = document.getElementById("toast"), toastTimer;
+  function toast(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg; toastEl.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { toastEl.hidden = true; }, 2600);
+  }
+
+  // ---------- copy buttons ----------
+  function selectTarget(id) {
+    var el = id && document.getElementById(id);
+    if (!el) return false;
+    var d = el.closest("details");
+    while (d) { d.open = true; d = d.parentElement && d.parentElement.closest("details"); }
+    try {
+      var r = document.createRange(); r.selectNodeContents(el);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      el.scrollIntoView({ block: "center" });
+      return true;
+    } catch (e) { return false; }
+  }
+  document.querySelectorAll(".copy-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var text = btn.getAttribute("data-copy");
+      var lbl = btn.querySelector(".copy-lbl"), orig = lbl.textContent;
+      function ok() {
+        btn.classList.add("done"); lbl.textContent = "コピーしました";
+        setTimeout(function () { btn.classList.remove("done"); lbl.textContent = orig; }, 1800);
+      }
+      function fail() {
+        var sel = selectTarget(btn.getAttribute("data-target"));
+        toast(sel ? "コピーできなかったため本文を選択しました。Ctrl+C（⌘C）でコピーしてください" : "コピーできませんでした。本文を選択してコピーしてください");
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(ok, fail);
+        } else { fail(); }
+      } catch (e) { fail(); }
+    });
+  });
+
+  // ---------- hearing tabs ----------
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".hg-tab"));
+  function activate(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+      var p = document.getElementById(t.getAttribute("aria-controls"));
+      if (p) p.hidden = !on;
+    });
+    if (focus) tab.focus();
+    sset("hg-tab", tab.id);
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener("click", function () { activate(t, false); });
+    t.addEventListener("keydown", function (e) {
+      var n = null;
+      if (e.key === "ArrowRight") n = tabs[(i + 1) % tabs.length];
+      if (e.key === "ArrowLeft") n = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (e.key === "Home") n = tabs[0];
+      if (e.key === "End") n = tabs[tabs.length - 1];
+      if (n) { e.preventDefault(); activate(n, true); }
+    });
+  });
+  var savedTab = sget("hg-tab");
+  if (savedTab && document.getElementById(savedTab)) activate(document.getElementById(savedTab), false);
+
+  // ---------- hypothesis filter ----------
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".fchip"));
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".hcard"));
+  var countEl = document.querySelector(".hf-count");
+  function applyFilter(f) {
+    var shown = 0;
+    cards.forEach(function (c) {
+      var ok = true;
+      if (f.indexOf("co:") === 0) ok = (c.getAttribute("data-co") || "").split("|").indexOf(f.slice(3)) >= 0;
+      else if (f.indexOf("rank:") === 0) ok = c.getAttribute("data-rank") === f.slice(5);
+      c.hidden = !ok; if (ok) shown++;
+    });
+    chips.forEach(function (ch) { ch.setAttribute("aria-pressed", ch.getAttribute("data-f") === f ? "true" : "false"); });
+    if (countEl) countEl.textContent = shown + " / " + cards.length + " 枚";
+    sset("hfilter", f);
+  }
+  chips.forEach(function (ch) { ch.addEventListener("click", function () { applyFilter(ch.getAttribute("data-f")); }); });
+  var savedF = sget("hfilter");
+  applyFilter(savedF && chips.some(function (c) { return c.getAttribute("data-f") === savedF; }) ? savedF : "all");
+
+  // ---------- TOC (same behaviour as the report page) ----------
+  var det = document.getElementById("toc-details");
+  var mq = window.matchMedia("(max-width: 960px)");
+  function syncToc() { if (det) det.open = !mq.matches; }
+  syncToc();
+  if (mq.addEventListener) mq.addEventListener("change", syncToc);
+  if (det) det.addEventListener("click", function (e) { if (e.target.tagName === "A" && mq.matches) det.open = false; });
+  var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
+  var map = {};
+  links.forEach(function (a) { map[a.getAttribute("href").slice(1)] = a; });
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting && map[en.target.id]) {
+          links.forEach(function (a) { a.classList.remove("active"); });
+          map[en.target.id].classList.add("active");
+        }
+      });
+    }, { rootMargin: "0px 0px -70% 0px" });
+    Object.keys(map).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
+  }
+  // open an appendix when navigated to
+  function openHash() {
+    var id = location.hash.slice(1); if (!id) return;
+    var el = document.getElementById(id); if (!el) return;
+    var d = el.querySelector("details.appx") || el.closest("details");
+    if (d) d.open = true;
+  }
+  window.addEventListener("hashchange", openHash); openHash();
+  document.querySelectorAll('a[href^="#app"], a[href^="#c"]').forEach(function (a) {
+    a.addEventListener("click", function () {
+      var el = document.getElementById(a.getAttribute("href").slice(1)); if (!el) return;
+      var d = el.querySelector("details.appx") || el.closest("details"); if (d) d.open = true;
+    });
+  });
+})();
+
+</script>
